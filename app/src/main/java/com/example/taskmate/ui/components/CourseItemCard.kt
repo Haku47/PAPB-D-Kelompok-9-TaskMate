@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,10 +35,17 @@ fun CourseItemCard(
     course: CourseItem,
     onClick: () -> Unit
 ) {
+    val timeOnly = if (course.time.contains(",")) {
+        course.time.substringAfter(",").trim()
+    } else {
+        course.time.trim()
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
+            .heightIn(min = 90.dp)
             .clickable { onClick() }
             .border(1.dp, BorderColor, RoundedCornerShape(12.dp)),
         shape = RoundedCornerShape(12.dp),
@@ -48,7 +56,7 @@ fun CourseItemCard(
                 .fillMaxWidth()
                 .fillMaxHeight()
         ) {
-            // Blok Biru Solid Sisi Kiri (Sesuai Figma)
+            // Blok Biru Solid Sisi Kiri
             Box(
                 modifier = Modifier
                     .width(64.dp)
@@ -70,7 +78,7 @@ fun CourseItemCard(
                 )
                 Spacer(modifier = Modifier.height(3.dp))
                 Text(
-                    text = "${course.day}, ${course.time}",
+                    text = "${course.day}, $timeOnly",
                     fontSize = 12.sp,
                     color = TextSecondary
                 )

@@ -35,3 +35,11 @@ val White = Color(0xFFFFFFFF)
 val TextPrimary = Color(0xFF1F2937)
 val TextSecondary = Color(0xFF6B7280)
 val BorderColor = Color(0xFFE5E7EB)
+
+// --- DARK MODE PALETTE ---
+val BackgroundDark = Color(0xFF121212)
+val SurfaceDark = Color(0xFF1E1E1E)
+val SurfaceCardDark = Color(0xFF252525)
+val TextPrimaryDark = Color(0xFFF3F4F6)
+val TextSecondaryDark = Color(0xFF9CA3AF)
+val BorderColorDark = Color(0xFF374151)

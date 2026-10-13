@@ -2,11 +2,11 @@ package com.example.taskmate.ui.screens.sub
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,8 +39,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.taskmate.ui.theme.BackgroundDark
 import com.example.taskmate.ui.theme.BlueNormal
+import com.example.taskmate.ui.theme.SurfaceCardDark
+import com.example.taskmate.ui.theme.SurfaceDark
 import com.example.taskmate.ui.theme.TextPrimary
+import com.example.taskmate.ui.theme.TextPrimaryDark
+import com.example.taskmate.ui.theme.ThemeState
 import com.example.taskmate.ui.theme.White
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,12 +54,19 @@ fun SettingsScreen(
     onNavigateBack: () -> Unit,
     onLogout: () -> Unit
 ) {
-    var displayMode by remember { mutableStateOf("Light") }
+    val systemInDark = isSystemInDarkTheme()
+    var displayMode by remember {
+        mutableStateOf(if (ThemeState.isDarkMode) "Dark" else "Light")
+    }
     var fontSize by remember { mutableStateOf("Regular") }
     var language by remember { mutableStateOf("English") }
 
+    val isDark = ThemeState.isDarkMode
+    val currentBg = if (isDark) BackgroundDark else White
+    val currentText = if (isDark) TextPrimaryDark else TextPrimary
+
     Scaffold(
-        containerColor = White,
+        containerColor = currentBg,
         topBar = {
             TopAppBar(
                 title = {
@@ -62,7 +74,7 @@ fun SettingsScreen(
                         text = "Settings",
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
-                        color = TextPrimary
+                        color = currentText
                     )
                 },
                 navigationIcon = {
@@ -70,11 +82,11 @@ fun SettingsScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = TextPrimary
+                            tint = currentText
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = White)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = currentBg)
             )
         }
     ) { padding ->
@@ -90,7 +102,14 @@ fun SettingsScreen(
                     label = "Display Mode",
                     selectedValue = displayMode,
                     options = listOf("Light", "Dark", "System"),
-                    onOptionSelected = { displayMode = it }
+                    onOptionSelected = { selected ->
+                        displayMode = selected
+                        ThemeState.isDarkMode = when (selected) {
+                            "Dark" -> true
+                            "Light" -> false
+                            else -> systemInDark
+                        }
+                    }
                 )
                 SettingRowDropdown(
                     label = "Font Size",
@@ -133,7 +152,11 @@ fun SettingRowDropdown(
     onOptionSelected: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val cardBackground = Color(0xFFDCEBFE) // Biru muda sesuai warna card profil di Figma
+    val isDark = ThemeState.isDarkMode
+
+    val cardBackground = if (isDark) SurfaceCardDark else Color(0xFFDCEBFE)
+    val pillBackground = if (isDark) SurfaceDark else White
+    val currentText = if (isDark) TextPrimaryDark else TextPrimary
 
     Surface(
         color = cardBackground,
@@ -152,17 +175,17 @@ fun SettingRowDropdown(
             Text(
                 text = label,
                 fontSize = 14.sp,
-                color = TextPrimary,
+                color = currentText,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(top = 8.dp)
             )
 
-            // Dropdown pill putih di sisi kanan
+            // Dropdown pill di sisi kanan
             Box {
                 Row(
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
-                        .background(White)
+                        .background(pillBackground)
                         .clickable { expanded = true }
                         .padding(horizontal = 14.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -170,13 +193,13 @@ fun SettingRowDropdown(
                     Text(
                         text = selectedValue,
                         fontSize = 13.sp,
-                        color = TextPrimary,
+                        color = currentText,
                         fontWeight = FontWeight.Medium
                     )
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowDown,
                         contentDescription = "Dropdown",
-                        tint = TextPrimary,
+                        tint = currentText,
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -184,11 +207,17 @@ fun SettingRowDropdown(
                 DropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
-                    modifier = Modifier.background(White)
+                    modifier = Modifier.background(pillBackground)
                 ) {
                     options.forEach { option ->
                         DropdownMenuItem(
-                            text = { Text(option, fontSize = 13.sp) },
+                            text = {
+                                Text(
+                                    text = option,
+                                    fontSize = 13.sp,
+                                    color = currentText
+                                )
+                            },
                             onClick = {
                                 onOptionSelected(option)
                                 expanded = false

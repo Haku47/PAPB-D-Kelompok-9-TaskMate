@@ -1,30 +1,51 @@
 package com.example.taskmate.navigation
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.taskmate.ui.components.TaskMateBottomBar
 import com.example.taskmate.ui.screens.auth.*
 import com.example.taskmate.ui.screens.main.*
 import com.example.taskmate.ui.screens.sub.*
+import com.example.taskmate.ui.theme.BackgroundDark
+import com.example.taskmate.ui.theme.ThemeState
+import com.example.taskmate.ui.theme.White
 
 @Composable
 fun TaskMateNavGraph(navController: NavHostController) {
-    Scaffold(
-        containerColor = Color.White,
-        bottomBar = {
-            TaskMateBottomBar(navController = navController)
-        }
-    ) { innerPadding ->
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    // Daftar rute layar utama yang boleh memunculkan bottom navigation bar
+    val mainTabs = listOf(
+        Screen.Home.route,
+        Screen.Courses.route,
+        Screen.Tasks.route,
+        Screen.Schedule.route,
+        Screen.Profile.route
+    )
+    val shouldShowBottomBar = currentRoute in mainTabs
+    val backgroundColor = if (ThemeState.isDarkMode) BackgroundDark else White
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(backgroundColor)
+            .statusBarsPadding() // Mencegah teks atas bertabrakan dengan status bar jam dan baterai HP
+    ) {
         NavHost(
             navController = navController,
             startDestination = Screen.Splash.route,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.fillMaxSize()
         ) {
             // --- 1. AUTH FLOW ---
             composable(Screen.Splash.route) {
@@ -193,6 +214,15 @@ fun TaskMateNavGraph(navController: NavHostController) {
                         }
                     }
                 )
+            }
+        }
+
+        // Floating Navbar di posisi paling bawah layar utama
+        if (shouldShowBottomBar) {
+            Box(
+                modifier = Modifier.align(Alignment.BottomCenter)
+            ) {
+                TaskMateBottomBar(navController = navController)
             }
         }
     }

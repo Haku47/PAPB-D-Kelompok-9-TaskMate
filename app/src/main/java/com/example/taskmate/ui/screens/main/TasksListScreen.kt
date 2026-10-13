@@ -1,9 +1,10 @@
 package com.example.taskmate.ui.screens.main
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,14 +23,15 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,33 +49,19 @@ fun TasksListScreen(
 ) {
     var searchQuery by remember { mutableStateOf("") }
 
-    Scaffold(
-        containerColor = White,
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onNavigateToAddTask,
-                containerColor = White,
-                shape = CircleShape,
-                modifier = Modifier
-                    .padding(bottom = 76.dp, end = 6.dp)
-                    .size(54.dp)
-                    .border(1.5.dp, BorderColor, CircleShape),
-                elevation = FloatingActionButtonDefaults.elevation(4.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Task",
-                    tint = TextPrimary,
-                    modifier = Modifier.size(26.dp)
-                )
-            }
-        }
-    ) { innerPadding ->
+    val filteredTasks = DummyData.tasks.filter {
+        it.title.contains(searchQuery, ignoreCase = true) ||
+                it.course.contains(searchQuery, ignoreCase = true)
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(White)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(White)
-                .padding(innerPadding)
                 .padding(horizontal = 20.dp)
         ) {
             Spacer(modifier = Modifier.height(20.dp))
@@ -120,20 +108,37 @@ fun TasksListScreen(
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
+                contentPadding = PaddingValues(top = 4.dp, bottom = 120.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(DummyData.tasks) { task ->
+                items(filteredTasks) { task ->
                     TaskItemCard(
                         task = task,
                         onClick = { onNavigateToTaskDetail(task.id) }
                     )
                 }
-
-                // Spacing bawah ekstra agar kartu paling bawah tidak tertumpuk FAB dan floating navbar
-                item {
-                    Spacer(modifier = Modifier.height(100.dp))
-                }
             }
+        }
+
+        FloatingActionButton(
+            onClick = onNavigateToAddTask,
+            shape = CircleShape,
+            containerColor = Color(0xFFF1F5F9),
+            contentColor = TextPrimary,
+            elevation = FloatingActionButtonDefaults.elevation(
+                defaultElevation = 6.dp,
+                pressedElevation = 2.dp
+            ),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 20.dp, bottom = 96.dp)
+                .size(56.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add Task",
+                modifier = Modifier.size(26.dp)
+            )
         }
     }
 }

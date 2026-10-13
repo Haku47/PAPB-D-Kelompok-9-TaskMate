@@ -33,6 +33,12 @@ import com.example.taskmate.ui.theme.White
 fun ScheduleItemCard(
     course: CourseItem
 ) {
+    val timeOnly = if (course.time.contains(",")) {
+        course.time.substringAfter(",").trim()
+    } else {
+        course.time.trim()
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -68,7 +74,7 @@ fun ScheduleItemCard(
                 )
                 Spacer(modifier = Modifier.height(3.dp))
                 Text(
-                    text = course.time,
+                    text = timeOnly,
                     fontSize = 12.sp,
                     color = TextSecondary
                 )

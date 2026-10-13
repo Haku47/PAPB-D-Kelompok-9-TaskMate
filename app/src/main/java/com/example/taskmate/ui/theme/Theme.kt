@@ -1,32 +1,38 @@
 package com.example.taskmate.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
+
+private val DarkColorScheme = darkColorScheme(
+    primary = BlueNormal,
+    background = BackgroundDark,
+    surface = SurfaceDark,
+    onPrimary = White,
+    onBackground = TextPrimaryDark,
+    onSurface = TextPrimaryDark
+)
 
 private val LightColorScheme = lightColorScheme(
     primary = BlueNormal,
-    secondary = BlueDark,
-    tertiary = BlueLight,
     background = White,
     surface = White,
     onPrimary = White,
-    onSecondary = White,
-    onTertiary = TextPrimary,
     onBackground = TextPrimary,
     onSurface = TextPrimary
 )
 
 @Composable
 fun TaskmateTheme(
-    darkTheme: Boolean = false,
-    dynamicColor: Boolean = false,
+    darkTheme: Boolean = ThemeState.isDarkMode,
     content: @Composable () -> Unit
 ) {
-    // Selalu gunakan LightColorScheme agar tampilan layar dan kartu berwarna putih bersih sesuai Figma
+    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+
     MaterialTheme(
-        colorScheme = LightColorScheme,
+        colorScheme = colorScheme,
         typography = Typography,
         content = content
     )

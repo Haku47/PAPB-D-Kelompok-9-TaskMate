@@ -28,7 +28,7 @@ object DummyData {
             id = 1,
             title = "PAPB D",
             day = "Tuesday",
-            time = "Tuesday, 09:35 AM - 11:15 AM",
+            time = "09:35 AM - 11:15 AM",
             room = "Room RV1.3",
             lecturer = "Dr. Eng. Herman Tolle, S.T., M.T."
         ),
@@ -36,7 +36,7 @@ object DummyData {
             id = 2,
             title = "PAPB D",
             day = "Tuesday",
-            time = "Tuesday, 09:35 AM - 11:15 AM",
+            time = "09:35 AM - 11:15 AM",
             room = "Room RV1.3",
             lecturer = "Dr. Eng. Herman Tolle, S.T., M.T."
         ),
@@ -44,7 +44,7 @@ object DummyData {
             id = 3,
             title = "PAPB D",
             day = "Tuesday",
-            time = "Tuesday, 09:35 AM - 11:15 AM",
+            time = "09:35 AM - 11:15 AM",
             room = "Room RV1.3",
             lecturer = "Dr. Eng. Herman Tolle, S.T., M.T."
         ),
@@ -52,7 +52,7 @@ object DummyData {
             id = 4,
             title = "PAPB D",
             day = "Tuesday",
-            time = "Tuesday, 09:35 AM - 11:15 AM",
+            time = "09:35 AM - 11:15 AM",
             room = "Room RV1.3",
             lecturer = "Dr. Eng. Herman Tolle, S.T., M.T."
         ),
@@ -60,7 +60,7 @@ object DummyData {
             id = 5,
             title = "PAPB D",
             day = "Tuesday",
-            time = "Tuesday, 09:35 AM - 11:15 AM",
+            time = "09:35 AM - 11:15 AM",
             room = "Room RV1.3",
             lecturer = "Dr. Eng. Herman Tolle, S.T., M.T."
         ),
@@ -68,7 +68,7 @@ object DummyData {
             id = 6,
             title = "PAPB D",
             day = "Tuesday",
-            time = "Tuesday, 09:35 AM - 11:15 AM",
+            time = "09:35 AM - 11:15 AM",
             room = "Room RV1.3",
             lecturer = "Dr. Eng. Herman Tolle, S.T., M.T."
         )
@@ -83,7 +83,7 @@ object DummyData {
             id = 101,
             title = "JST D",
             day = "Monday",
-            time = "Monday, 10:30 AM - 12:10 PM",
+            time = "10:30 AM - 12:10 PM",
             room = "Room G1.2",
             lecturer = "Prof. Agus Widodo"
         ),
@@ -91,7 +91,7 @@ object DummyData {
             id = 102,
             title = "Keamanan Jaringan A",
             day = "Monday",
-            time = "Monday, 12:30 PM - 03:15 PM",
+            time = "12:30 PM - 03:15 PM",
             room = "Room F4.6",
             lecturer = "Ir. Tri Astoto, M.Kom."
         ),
@@ -101,7 +101,7 @@ object DummyData {
             id = 103,
             title = "JST D",
             day = "Tuesday",
-            time = "Tuesday, 07:00 AM - 08:40 AM",
+            time = "07:00 AM - 08:40 AM",
             room = "Room F4.2",
             lecturer = "Prof. Agus Widodo"
         ),
@@ -109,7 +109,7 @@ object DummyData {
             id = 104,
             title = "PAPB D",
             day = "Tuesday",
-            time = "Tuesday, 09:35 AM - 11:15 AM",
+            time = "09:35 AM - 11:15 AM",
             room = "Room RV1.3",
             lecturer = "Dr. Eng. Herman Tolle, S.T., M.T."
         ),
@@ -117,7 +117,7 @@ object DummyData {
             id = 105,
             title = "Komputer Grafis D",
             day = "Tuesday",
-            time = "Tuesday, 03:20 PM - 05:00 PM",
+            time = "03:20 PM - 05:00 PM",
             room = "Room F3.11",
             lecturer = "Sabriansyah Rizqika, S.T., M.Eng."
         )
