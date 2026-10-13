@@ -1,21 +1,49 @@
 package com.example.taskmate.ui.screens.auth
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskmate.ui.theme.BlueNormal
+import com.example.taskmate.ui.theme.BorderColor
 import com.example.taskmate.ui.theme.TextPrimary
 import com.example.taskmate.ui.theme.TextSecondary
+import com.example.taskmate.ui.theme.White
 
 @Composable
 fun SignUpScreen(
@@ -26,112 +54,182 @@ fun SignUpScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var isPasswordVisible by remember { mutableStateOf(false) }
+    var isConfirmPasswordVisible by remember { mutableStateOf(false) }
+
+    val fieldShape = RoundedCornerShape(10.dp)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 28.dp, vertical = 36.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .background(White)
+            .padding(horizontal = 24.dp)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(60.dp))
+
         Text(
             text = "Sign Up",
-            fontSize = 26.sp,
+            fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary
         )
-        Spacer(modifier = Modifier.height(28.dp))
+
+        Spacer(modifier = Modifier.height(30.dp))
 
         // Username
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text(text = "Username", fontSize = 13.sp, color = TextPrimary, fontWeight = FontWeight.Medium)
+            Text("Username", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = username,
                 onValueChange = { username = it },
-                placeholder = { Text("Placeholder", color = TextSecondary, fontSize = 14.sp) },
-                singleLine = true,
+                placeholder = { Text("Enter your username", color = TextSecondary, fontSize = 14.sp) },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp)
+                shape = fieldShape,
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = BlueNormal,
+                    unfocusedBorderColor = BorderColor,
+                    focusedContainerColor = White,
+                    unfocusedContainerColor = White
+                )
             )
         }
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Email
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text(text = "Email", fontSize = 13.sp, color = TextPrimary, fontWeight = FontWeight.Medium)
+            Text("Email", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                placeholder = { Text("Placeholder", color = TextSecondary, fontSize = 14.sp) },
-                singleLine = true,
+                placeholder = { Text("Enter your email", color = TextSecondary, fontSize = 14.sp) },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp)
+                shape = fieldShape,
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = BlueNormal,
+                    unfocusedBorderColor = BorderColor,
+                    focusedContainerColor = White,
+                    unfocusedContainerColor = White
+                )
             )
         }
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Password
+        // Password with toggle
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text(text = "Password", fontSize = 13.sp, color = TextPrimary, fontWeight = FontWeight.Medium)
+            Text("Password", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                placeholder = { Text("Placeholder", color = TextSecondary, fontSize = 14.sp) },
-                singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
+                placeholder = { Text("Enter your password", color = TextSecondary, fontSize = 14.sp) },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp)
+                shape = fieldShape,
+                singleLine = true,
+                visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                trailingIcon = {
+                    IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                        Icon(
+                            imageVector = if (isPasswordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                            contentDescription = if (isPasswordVisible) "Hide password" else "Show password",
+                            tint = TextPrimary,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+                },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = BlueNormal,
+                    unfocusedBorderColor = BorderColor,
+                    focusedContainerColor = White,
+                    unfocusedContainerColor = White
+                )
             )
         }
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Confirm Password
+        // Confirm Password with toggle
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text(text = "Confirm Password", fontSize = 13.sp, color = TextPrimary, fontWeight = FontWeight.Medium)
+            Text("Confirm Password", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
-                placeholder = { Text("Placeholder", color = TextSecondary, fontSize = 14.sp) },
-                singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
+                placeholder = { Text("Enter your password", color = TextSecondary, fontSize = 14.sp) },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp)
+                shape = fieldShape,
+                singleLine = true,
+                visualTransformation = if (isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                trailingIcon = {
+                    IconButton(onClick = { isConfirmPasswordVisible = !isConfirmPasswordVisible }) {
+                        Icon(
+                            imageVector = if (isConfirmPasswordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                            contentDescription = if (isConfirmPasswordVisible) "Hide password" else "Show password",
+                            tint = TextPrimary,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+                },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = BlueNormal,
+                    unfocusedBorderColor = BorderColor,
+                    focusedContainerColor = White,
+                    unfocusedContainerColor = White
+                )
             )
         }
 
         Spacer(modifier = Modifier.height(28.dp))
 
-        // Tombol Sign Up
+        // Button Sign Up
         Button(
             onClick = onSignUpSuccess,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp),
-            shape = RoundedCornerShape(8.dp),
+                .height(52.dp),
+            shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(containerColor = BlueNormal)
         ) {
-            Text(text = "Sign Up", fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+            Text(
+                text = "Sign Up",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = White
+            )
         }
 
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
-        Row {
-            Text(text = "Already have an account? ", fontSize = 13.sp, color = TextSecondary)
+        // Already have an account? Login
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Already have an account? ",
+                fontSize = 13.sp,
+                color = TextPrimary
+            )
             Text(
                 text = "Login",
                 fontSize = 13.sp,
-                color = BlueNormal,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Bold,
+                color = TextPrimary,
+                textDecoration = TextDecoration.Underline,
                 modifier = Modifier.clickable { onNavigateToLogin() }
             )
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
