@@ -37,6 +37,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.taskmate.ui.components.AppAlertDialog
+import com.example.taskmate.ui.components.DialogType
 import com.example.taskmate.ui.theme.BlueNormal
 import com.example.taskmate.ui.theme.BorderColor
 import com.example.taskmate.ui.theme.TextPrimary
@@ -53,8 +55,19 @@ fun AddCourseScreen(
     var startTime by remember { mutableStateOf("09.35") }
     var endTime by remember { mutableStateOf("11.15") }
     var location by remember { mutableStateOf("") }
+    var showDialog by remember { mutableStateOf(false) }
 
     val fieldShape = RoundedCornerShape(10.dp)
+
+    if (showDialog) {
+        AppAlertDialog(
+            type = DialogType.COURSE_ADDED,
+            onDismiss = {
+                showDialog = false
+                onCourseAdded()
+            }
+        )
+    }
 
     Scaffold(
         containerColor = White,
@@ -65,7 +78,7 @@ fun AddCourseScreen(
                     .padding(horizontal = 24.dp, vertical = 20.dp)
             ) {
                 Button(
-                    onClick = onCourseAdded,
+                    onClick = { showDialog = true },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),

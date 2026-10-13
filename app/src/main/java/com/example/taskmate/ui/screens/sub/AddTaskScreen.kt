@@ -39,6 +39,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.taskmate.ui.components.AppAlertDialog
+import com.example.taskmate.ui.components.DialogType
 import com.example.taskmate.ui.theme.BlueNormal
 import com.example.taskmate.ui.theme.BorderColor
 import com.example.taskmate.ui.theme.TextPrimary
@@ -55,9 +57,20 @@ fun AddTaskScreen(
     var selectedCourse by remember { mutableStateOf("") }
     var dueDate by remember { mutableStateOf("") }
     var isCourseDropdownOpen by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
 
     val courseOptions = listOf("PAPB D", "JST D", "Keamanan Jaringan A", "Komputer Grafis D")
     val fieldShape = RoundedCornerShape(10.dp)
+
+    if (showDialog) {
+        AppAlertDialog(
+            type = DialogType.TASK_ADDED,
+            onDismiss = {
+                showDialog = false
+                onTaskAdded()
+            }
+        )
+    }
 
     Scaffold(
         containerColor = White,
@@ -68,7 +81,7 @@ fun AddTaskScreen(
                     .padding(horizontal = 24.dp, vertical = 20.dp)
             ) {
                 Button(
-                    onClick = onTaskAdded,
+                    onClick = { showDialog = true },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
