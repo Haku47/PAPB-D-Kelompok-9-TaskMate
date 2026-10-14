@@ -41,10 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskmate.ui.components.AppAlertDialog
 import com.example.taskmate.ui.components.DialogType
+import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
-import com.example.taskmate.ui.theme.BorderColor
-import com.example.taskmate.ui.theme.TextPrimary
-import com.example.taskmate.ui.theme.TextSecondary
 import com.example.taskmate.ui.theme.White
 
 @Composable
@@ -73,11 +71,12 @@ fun AddTaskScreen(
     }
 
     Scaffold(
-        containerColor = White,
+        containerColor = AppThemeColors.background,
         bottomBar = {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(AppThemeColors.background)
                     .padding(horizontal = 24.dp, vertical = 20.dp)
             ) {
                 Button(
@@ -101,7 +100,7 @@ fun AddTaskScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(White)
+                .background(AppThemeColors.background)
                 .padding(innerPadding)
                 .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState())
@@ -117,13 +116,13 @@ fun AddTaskScreen(
                     modifier = Modifier
                         .size(36.dp)
                         .clip(CircleShape)
-                        .border(1.5.dp, TextPrimary, CircleShape)
+                        .border(1.5.dp, AppThemeColors.textPrimary, CircleShape)
                         .clickable { onNavigateBack() }
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                         contentDescription = "Back",
-                        tint = TextPrimary,
+                        tint = AppThemeColors.textPrimary,
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(4.dp)
@@ -134,7 +133,7 @@ fun AddTaskScreen(
                     text = "Add Task",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = AppThemeColors.textPrimary,
                     modifier = Modifier.padding(top = 2.dp)
                 )
             }
@@ -142,7 +141,7 @@ fun AddTaskScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Task Title
-            Text("Task Title", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text("Task Title", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = taskTitle,
@@ -152,14 +151,18 @@ fun AddTaskScreen(
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor
+                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedTextColor = AppThemeColors.textPrimary,
+                    unfocusedTextColor = AppThemeColors.textPrimary,
+                    focusedContainerColor = AppThemeColors.searchBarContainer,
+                    unfocusedContainerColor = AppThemeColors.searchBarContainer
                 )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Description (Area input lebih tinggi sesuai Figma)
-            Text("Description", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text("Description", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = description,
@@ -170,14 +173,18 @@ fun AddTaskScreen(
                 shape = fieldShape,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor
+                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedTextColor = AppThemeColors.textPrimary,
+                    unfocusedTextColor = AppThemeColors.textPrimary,
+                    focusedContainerColor = AppThemeColors.searchBarContainer,
+                    unfocusedContainerColor = AppThemeColors.searchBarContainer
                 )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Course Dropdown (Sesuai Figma: ada Chevron Down)
-            Text("Course", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text("Course", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             Box(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
@@ -188,7 +195,7 @@ fun AddTaskScreen(
                         Icon(
                             imageVector = Icons.Default.KeyboardArrowDown,
                             contentDescription = "Dropdown",
-                            tint = TextPrimary
+                            tint = AppThemeColors.textPrimary
                         )
                     },
                     modifier = Modifier
@@ -197,18 +204,28 @@ fun AddTaskScreen(
                     shape = fieldShape,
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = BlueNormal,
-                        unfocusedBorderColor = BorderColor
+                        unfocusedBorderColor = AppThemeColors.border,
+                        focusedTextColor = AppThemeColors.textPrimary,
+                        unfocusedTextColor = AppThemeColors.textPrimary,
+                        focusedContainerColor = AppThemeColors.searchBarContainer,
+                        unfocusedContainerColor = AppThemeColors.searchBarContainer
                     )
                 )
 
                 DropdownMenu(
                     expanded = isCourseDropdownOpen,
                     onDismissRequest = { isCourseDropdownOpen = false },
-                    modifier = Modifier.background(White)
+                    modifier = Modifier.background(AppThemeColors.cardBackground)
                 ) {
                     courseOptions.forEach { course ->
                         DropdownMenuItem(
-                            text = { Text(course, fontSize = 14.sp) },
+                            text = {
+                                Text(
+                                    text = course,
+                                    fontSize = 14.sp,
+                                    color = AppThemeColors.textPrimary
+                                )
+                            },
                             onClick = {
                                 selectedCourse = course
                                 isCourseDropdownOpen = false
@@ -221,7 +238,7 @@ fun AddTaskScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Due Date
-            Text("Due Date", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text("Due Date", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = dueDate,
@@ -231,7 +248,11 @@ fun AddTaskScreen(
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor
+                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedTextColor = AppThemeColors.textPrimary,
+                    unfocusedTextColor = AppThemeColors.textPrimary,
+                    focusedContainerColor = AppThemeColors.searchBarContainer,
+                    unfocusedContainerColor = AppThemeColors.searchBarContainer
                 )
             )
 

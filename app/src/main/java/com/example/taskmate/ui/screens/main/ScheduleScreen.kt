@@ -3,6 +3,7 @@ package com.example.taskmate.ui.screens.main
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -17,8 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskmate.data.DummyData
 import com.example.taskmate.ui.components.ScheduleItemCard
-import com.example.taskmate.ui.theme.TextPrimary
-import com.example.taskmate.ui.theme.White
+import com.example.taskmate.ui.theme.AppThemeColors
 
 @Composable
 fun ScheduleScreen() {
@@ -28,7 +28,7 @@ fun ScheduleScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(White)
+            .background(AppThemeColors.background)
             .padding(horizontal = 20.dp)
     ) {
         Spacer(modifier = Modifier.height(20.dp))
@@ -37,13 +37,14 @@ fun ScheduleScreen() {
             text = "Class Schedule",
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
-            color = TextPrimary
+            color = AppThemeColors.textPrimary
         )
 
         Spacer(modifier = Modifier.height(14.dp))
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(10.dp),
+            contentPadding = PaddingValues(bottom = 120.dp),
             modifier = Modifier.fillMaxSize()
         ) {
             // Section Monday
@@ -52,7 +53,7 @@ fun ScheduleScreen() {
                     text = "Monday",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = AppThemeColors.textPrimary,
                     modifier = Modifier.padding(bottom = 2.dp)
                 )
             }
@@ -68,18 +69,13 @@ fun ScheduleScreen() {
                     text = "Tuesday",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = AppThemeColors.textPrimary,
                     modifier = Modifier.padding(bottom = 2.dp)
                 )
             }
 
             items(tuesdayCourses) { course ->
                 ScheduleItemCard(course = course)
-            }
-
-            // Padding bawah ekstra agar tidak tertutup floating navbar
-            item {
-                Spacer(modifier = Modifier.height(100.dp))
             }
         }
     }

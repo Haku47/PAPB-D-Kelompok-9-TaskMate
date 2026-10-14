@@ -18,8 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskmate.R
-import com.example.taskmate.ui.theme.TextPrimary
-import com.example.taskmate.ui.theme.White
+import com.example.taskmate.ui.theme.AppThemeColors
 
 @Composable
 fun WelcomeScreen(
@@ -28,7 +27,7 @@ fun WelcomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(White)
+            .background(AppThemeColors.background)
             .clickable { onContinue() }, // Tap di layar untuk melanjutkan ke Login Screen
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -46,7 +45,7 @@ fun WelcomeScreen(
             text = "Welcome to TaskMate",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = TextPrimary
+            color = AppThemeColors.textPrimary
         )
     }
 }

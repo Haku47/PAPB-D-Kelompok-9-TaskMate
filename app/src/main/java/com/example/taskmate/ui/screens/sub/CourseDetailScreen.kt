@@ -22,6 +22,7 @@ import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,10 +32,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskmate.data.DummyData
-import com.example.taskmate.ui.theme.BorderColor
-import com.example.taskmate.ui.theme.TextPrimary
-import com.example.taskmate.ui.theme.TextSecondary
-import com.example.taskmate.ui.theme.White
 
 @Composable
 fun CourseDetailScreen(
@@ -45,12 +42,12 @@ fun CourseDetailScreen(
     val course = DummyData.courses.find { it.id == courseId } ?: DummyData.courses.first()
 
     Scaffold(
-        containerColor = White
+        containerColor = MaterialTheme.colorScheme.background
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(White)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(innerPadding)
                 .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState())
@@ -69,13 +66,17 @@ fun CourseDetailScreen(
                         modifier = Modifier
                             .size(36.dp)
                             .clip(CircleShape)
-                            .border(1.5.dp, TextPrimary, CircleShape)
+                            .border(
+                                width = 1.5.dp,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                shape = CircleShape
+                            )
                             .clickable { onNavigateBack() }
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                             contentDescription = "Back",
-                            tint = TextPrimary,
+                            tint = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(4.dp)
@@ -86,7 +87,7 @@ fun CourseDetailScreen(
                         text = "Course Detail",
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.padding(top = 2.dp)
                     )
                 }
@@ -98,7 +99,7 @@ fun CourseDetailScreen(
                     Icon(
                         imageVector = Icons.Outlined.Edit,
                         contentDescription = "Edit Course",
-                        tint = TextPrimary,
+                        tint = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.size(22.dp)
                     )
                 }
@@ -143,20 +144,20 @@ private fun CourseDetailItem(
             text = label,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            color = TextPrimary
+            color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(6.dp))
         Text(
             text = value,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             lineHeight = 20.sp
         )
         Spacer(modifier = Modifier.height(14.dp))
         HorizontalDivider(
             thickness = 1.dp,
-            color = BorderColor
+            color = MaterialTheme.colorScheme.outlineVariant
         )
     }
 }

@@ -21,9 +21,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
-import com.example.taskmate.ui.theme.BorderColor
-import com.example.taskmate.ui.theme.TextPrimary
 import com.example.taskmate.ui.theme.White
 
 enum class DialogType(val message: String) {
@@ -48,8 +47,8 @@ fun AppAlertDialog(
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp)
                 .clip(cardShape)
-                .background(White)
-                .border(1.5.dp, BorderColor, cardShape)
+                .background(AppThemeColors.cardBackground)
+                .border(1.5.dp, AppThemeColors.border, cardShape)
                 .padding(horizontal = 24.dp, vertical = 28.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -61,7 +60,7 @@ fun AppAlertDialog(
                     text = displayMessage,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = AppThemeColors.textPrimary,
                     textAlign = TextAlign.Center,
                     lineHeight = 24.sp
                 )
@@ -80,7 +79,7 @@ fun AppAlertDialog(
                         text = "Close",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary
+                        color = White
                     )
                 }
             }

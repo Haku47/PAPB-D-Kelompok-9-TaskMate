@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -16,9 +17,6 @@ import com.example.taskmate.ui.components.TaskMateBottomBar
 import com.example.taskmate.ui.screens.auth.*
 import com.example.taskmate.ui.screens.main.*
 import com.example.taskmate.ui.screens.sub.*
-import com.example.taskmate.ui.theme.BackgroundDark
-import com.example.taskmate.ui.theme.ThemeState
-import com.example.taskmate.ui.theme.White
 
 @Composable
 fun TaskMateNavGraph(navController: NavHostController) {
@@ -34,12 +32,11 @@ fun TaskMateNavGraph(navController: NavHostController) {
         Screen.Profile.route
     )
     val shouldShowBottomBar = currentRoute in mainTabs
-    val backgroundColor = if (ThemeState.isDarkMode) BackgroundDark else White
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor)
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding() // Mencegah teks atas bertabrakan dengan status bar jam dan baterai HP
     ) {
         NavHost(

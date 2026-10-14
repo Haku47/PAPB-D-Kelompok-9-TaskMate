@@ -24,19 +24,18 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskmate.data.DummyData
 import com.example.taskmate.ui.theme.BlueNormal
-import com.example.taskmate.ui.theme.TextPrimary
-import com.example.taskmate.ui.theme.TextSecondary
-import com.example.taskmate.ui.theme.White
 
 @Composable
 fun TaskDetailScreen(
@@ -48,7 +47,7 @@ fun TaskDetailScreen(
     val task = DummyData.tasks.find { it.id == taskId } ?: DummyData.tasks.first()
 
     Scaffold(
-        containerColor = White,
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             Box(
                 modifier = Modifier
@@ -67,7 +66,7 @@ fun TaskDetailScreen(
                         text = "Mark as Finished",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = White
+                        color = Color.White
                     )
                 }
             }
@@ -76,7 +75,7 @@ fun TaskDetailScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(White)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(innerPadding)
                 .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState())
@@ -95,13 +94,17 @@ fun TaskDetailScreen(
                         modifier = Modifier
                             .size(36.dp)
                             .clip(CircleShape)
-                            .border(1.5.dp, TextPrimary, CircleShape)
+                            .border(
+                                width = 1.5.dp,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                shape = CircleShape
+                            )
                             .clickable { onNavigateBack() }
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                             contentDescription = "Back",
-                            tint = TextPrimary,
+                            tint = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(4.dp)
@@ -112,7 +115,7 @@ fun TaskDetailScreen(
                         text = "Task Detail",
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.padding(top = 2.dp)
                     )
                 }
@@ -124,7 +127,7 @@ fun TaskDetailScreen(
                     Icon(
                         imageVector = Icons.Outlined.Edit,
                         contentDescription = "Edit Task",
-                        tint = TextPrimary,
+                        tint = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.size(22.dp)
                     )
                 }
@@ -148,7 +151,7 @@ fun TaskDetailScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Due Date (Sesuai Figma: Friday, Oct 16 - 11:59 PM)
+            // Due Date
             DetailItem(
                 label = "Due Date",
                 value = "Friday, Oct 16 - 11:59 PM"
@@ -185,14 +188,14 @@ private fun DetailItem(
             text = label,
             fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold,
-            color = TextSecondary
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.height(6.dp))
         Text(
             text = value,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onBackground,
             lineHeight = 22.sp
         )
     }

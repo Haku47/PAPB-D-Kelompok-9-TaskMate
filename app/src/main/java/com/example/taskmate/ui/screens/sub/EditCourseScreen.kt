@@ -22,6 +22,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -33,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -40,9 +42,6 @@ import androidx.compose.ui.unit.sp
 import com.example.taskmate.ui.components.AppAlertDialog
 import com.example.taskmate.ui.components.DialogType
 import com.example.taskmate.ui.theme.BlueNormal
-import com.example.taskmate.ui.theme.BorderColor
-import com.example.taskmate.ui.theme.TextPrimary
-import com.example.taskmate.ui.theme.White
 
 @Composable
 fun EditCourseScreen(
@@ -70,7 +69,7 @@ fun EditCourseScreen(
     }
 
     Scaffold(
-        containerColor = White,
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             Box(
                 modifier = Modifier
@@ -89,7 +88,7 @@ fun EditCourseScreen(
                         text = "Edit Course",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = White
+                        color = Color.White
                     )
                 }
             }
@@ -98,7 +97,7 @@ fun EditCourseScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(White)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(innerPadding)
                 .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState())
@@ -114,13 +113,17 @@ fun EditCourseScreen(
                     modifier = Modifier
                         .size(36.dp)
                         .clip(CircleShape)
-                        .border(1.5.dp, TextPrimary, CircleShape)
+                        .border(
+                            width = 1.5.dp,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            shape = CircleShape
+                        )
                         .clickable { onNavigateBack() }
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                         contentDescription = "Back",
-                        tint = TextPrimary,
+                        tint = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(4.dp)
@@ -131,7 +134,7 @@ fun EditCourseScreen(
                     text = "Edit Course",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(top = 2.dp)
                 )
             }
@@ -139,7 +142,12 @@ fun EditCourseScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Course Title
-            Text("Course Title", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text(
+                text = "Course Title",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = courseTitle,
@@ -148,17 +156,24 @@ fun EditCourseScreen(
                 shape = fieldShape,
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor,
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
                 )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Lecturer Name
-            Text("Lecturer Name", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text(
+                text = "Lecturer Name",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = lecturerName,
@@ -167,17 +182,24 @@ fun EditCourseScreen(
                 shape = fieldShape,
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor,
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
                 )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Day
-            Text("Day", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text(
+                text = "Day",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = day,
@@ -186,10 +208,12 @@ fun EditCourseScreen(
                 shape = fieldShape,
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor,
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
                 )
             )
 
@@ -201,7 +225,12 @@ fun EditCourseScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("Start Time", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                    Text(
+                        text = "Start Time",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                     Spacer(modifier = Modifier.height(6.dp))
                     OutlinedTextField(
                         value = startTime,
@@ -210,10 +239,12 @@ fun EditCourseScreen(
                         shape = fieldShape,
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                             focusedBorderColor = BlueNormal,
-                            unfocusedBorderColor = BorderColor,
-                            focusedContainerColor = White,
-                            unfocusedContainerColor = White
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface
                         )
                     )
                 }
@@ -222,13 +253,18 @@ fun EditCourseScreen(
                     text = "-",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 36.dp)
                 )
 
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("End Time", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                    Text(
+                        text = "End Time",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                     Spacer(modifier = Modifier.height(6.dp))
                     OutlinedTextField(
                         value = endTime,
@@ -237,10 +273,12 @@ fun EditCourseScreen(
                         shape = fieldShape,
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                             focusedBorderColor = BlueNormal,
-                            unfocusedBorderColor = BorderColor,
-                            focusedContainerColor = White,
-                            unfocusedContainerColor = White
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface
                         )
                     )
                 }
@@ -249,7 +287,12 @@ fun EditCourseScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Location
-            Text("Location", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text(
+                text = "Location",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = location,
@@ -258,16 +301,18 @@ fun EditCourseScreen(
                 shape = fieldShape,
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor,
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
                 )
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Tombol "+ Another Session" (Biru Solid di Figma)
+            // Tombol "+ Another Session"
             Button(
                 onClick = { /* Handle tambah sesi */ },
                 modifier = Modifier
@@ -280,7 +325,7 @@ fun EditCourseScreen(
                     text = "+ Another Session",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = White
+                    color = Color.White
                 )
             }
 

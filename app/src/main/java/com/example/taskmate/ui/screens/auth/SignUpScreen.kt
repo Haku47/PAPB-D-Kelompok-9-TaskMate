@@ -39,10 +39,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
-import com.example.taskmate.ui.theme.BorderColor
-import com.example.taskmate.ui.theme.TextPrimary
-import com.example.taskmate.ui.theme.TextSecondary
 import com.example.taskmate.ui.theme.White
 
 @Composable
@@ -62,7 +60,7 @@ fun SignUpScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(White)
+            .background(AppThemeColors.background)
             .padding(horizontal = 24.dp)
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -73,27 +71,29 @@ fun SignUpScreen(
             text = "Sign Up",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
-            color = TextPrimary
+            color = AppThemeColors.textPrimary
         )
 
         Spacer(modifier = Modifier.height(30.dp))
 
         // Username
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text("Username", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text("Username", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = username,
                 onValueChange = { username = it },
-                placeholder = { Text("Enter your username", color = TextSecondary, fontSize = 14.sp) },
+                placeholder = { Text("Enter your username", color = AppThemeColors.textSecondary, fontSize = 14.sp) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = fieldShape,
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor,
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedTextColor = AppThemeColors.textPrimary,
+                    unfocusedTextColor = AppThemeColors.textPrimary,
+                    focusedContainerColor = AppThemeColors.searchBarContainer,
+                    unfocusedContainerColor = AppThemeColors.searchBarContainer
                 )
             )
         }
@@ -102,21 +102,23 @@ fun SignUpScreen(
 
         // Email
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text("Email", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text("Email", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                placeholder = { Text("Enter your email", color = TextSecondary, fontSize = 14.sp) },
+                placeholder = { Text("Enter your email", color = AppThemeColors.textSecondary, fontSize = 14.sp) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = fieldShape,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor,
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedTextColor = AppThemeColors.textPrimary,
+                    unfocusedTextColor = AppThemeColors.textPrimary,
+                    focusedContainerColor = AppThemeColors.searchBarContainer,
+                    unfocusedContainerColor = AppThemeColors.searchBarContainer
                 )
             )
         }
@@ -125,12 +127,12 @@ fun SignUpScreen(
 
         // Password with toggle
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text("Password", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text("Password", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                placeholder = { Text("Enter your password", color = TextSecondary, fontSize = 14.sp) },
+                placeholder = { Text("Enter your password", color = AppThemeColors.textSecondary, fontSize = 14.sp) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = fieldShape,
                 singleLine = true,
@@ -141,16 +143,18 @@ fun SignUpScreen(
                         Icon(
                             imageVector = if (isPasswordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                             contentDescription = if (isPasswordVisible) "Hide password" else "Show password",
-                            tint = TextPrimary,
+                            tint = AppThemeColors.textPrimary,
                             modifier = Modifier.size(22.dp)
                         )
                     }
                 },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor,
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedTextColor = AppThemeColors.textPrimary,
+                    unfocusedTextColor = AppThemeColors.textPrimary,
+                    focusedContainerColor = AppThemeColors.searchBarContainer,
+                    unfocusedContainerColor = AppThemeColors.searchBarContainer
                 )
             )
         }
@@ -159,12 +163,12 @@ fun SignUpScreen(
 
         // Confirm Password with toggle
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text("Confirm Password", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text("Confirm Password", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
-                placeholder = { Text("Enter your password", color = TextSecondary, fontSize = 14.sp) },
+                placeholder = { Text("Enter your password", color = AppThemeColors.textSecondary, fontSize = 14.sp) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = fieldShape,
                 singleLine = true,
@@ -175,16 +179,18 @@ fun SignUpScreen(
                         Icon(
                             imageVector = if (isConfirmPasswordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                             contentDescription = if (isConfirmPasswordVisible) "Hide password" else "Show password",
-                            tint = TextPrimary,
+                            tint = AppThemeColors.textPrimary,
                             modifier = Modifier.size(22.dp)
                         )
                     }
                 },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor,
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedTextColor = AppThemeColors.textPrimary,
+                    unfocusedTextColor = AppThemeColors.textPrimary,
+                    focusedContainerColor = AppThemeColors.searchBarContainer,
+                    unfocusedContainerColor = AppThemeColors.searchBarContainer
                 )
             )
         }
@@ -218,13 +224,13 @@ fun SignUpScreen(
             Text(
                 text = "Already have an account? ",
                 fontSize = 13.sp,
-                color = TextPrimary
+                color = AppThemeColors.textPrimary
             )
             Text(
                 text = "Login",
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
+                color = AppThemeColors.textPrimary,
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier.clickable { onNavigateToLogin() }
             )

@@ -1,5 +1,6 @@
 package com.example.taskmate.ui.theme
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 // Default template colors (dipertahankan agar tidak bentrok)
@@ -43,3 +44,36 @@ val SurfaceCardDark = Color(0xFF252525)
 val TextPrimaryDark = Color(0xFFF3F4F6)
 val TextSecondaryDark = Color(0xFF9CA3AF)
 val BorderColorDark = Color(0xFF374151)
+
+// --- DYNAMIC THEME COLORS HELPER ---
+object AppThemeColors {
+    val background: Color
+        @Composable get() = if (ThemeState.isDarkMode) BackgroundDark else White
+
+    val surface: Color
+        @Composable get() = if (ThemeState.isDarkMode) SurfaceDark else White
+
+    val cardBackground: Color
+        @Composable get() = if (ThemeState.isDarkMode) SurfaceCardDark else White
+
+    val textPrimary: Color
+        @Composable get() = if (ThemeState.isDarkMode) TextPrimaryDark else TextPrimary
+
+    val textSecondary: Color
+        @Composable get() = if (ThemeState.isDarkMode) TextSecondaryDark else TextSecondary
+
+    val border: Color
+        @Composable get() = if (ThemeState.isDarkMode) BorderColorDark else BorderColor
+
+    val searchBarContainer: Color
+        @Composable get() = if (ThemeState.isDarkMode) SurfaceCardDark else White
+
+    val fabBackground: Color
+        @Composable get() = if (ThemeState.isDarkMode) SurfaceCardDark else Color(0xFFF1F5F9)
+
+    val profileBannerBg: Color
+        @Composable get() = if (ThemeState.isDarkMode) SurfaceDark else Color(0xFFE8F1FC)
+
+    val avatarBg: Color
+        @Composable get() = if (ThemeState.isDarkMode) Color(0xFF2C3E50) else Color(0xFFD3E4F8)
+}

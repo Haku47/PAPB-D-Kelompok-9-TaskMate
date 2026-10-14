@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,16 +19,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskmate.data.CourseItem
+import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
-import com.example.taskmate.ui.theme.BorderColor
-import com.example.taskmate.ui.theme.TextPrimary
-import com.example.taskmate.ui.theme.TextSecondary
-import com.example.taskmate.ui.theme.White
 
 @Composable
 fun ScheduleItemCard(
@@ -43,9 +40,10 @@ fun ScheduleItemCard(
         modifier = Modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
-            .border(1.dp, BorderColor, RoundedCornerShape(12.dp)),
+            .heightIn(min = 90.dp)
+            .border(1.dp, AppThemeColors.border, RoundedCornerShape(12.dp)),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = White)
+        colors = CardDefaults.cardColors(containerColor = AppThemeColors.cardBackground)
     ) {
         Row(
             modifier = Modifier
@@ -60,7 +58,7 @@ fun ScheduleItemCard(
                     .background(BlueNormal)
             )
 
-            // Detail Kelas Sisi Kanan (Latar Belakang Putih)
+            // Detail Kelas Sisi Kanan
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -70,19 +68,19 @@ fun ScheduleItemCard(
                     text = course.title,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary
+                    color = AppThemeColors.textPrimary
                 )
                 Spacer(modifier = Modifier.height(3.dp))
                 Text(
                     text = timeOnly,
                     fontSize = 12.sp,
-                    color = TextSecondary
+                    color = AppThemeColors.textSecondary
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = course.room,
                     fontSize = 12.sp,
-                    color = TextSecondary
+                    color = AppThemeColors.textSecondary
                 )
             }
         }

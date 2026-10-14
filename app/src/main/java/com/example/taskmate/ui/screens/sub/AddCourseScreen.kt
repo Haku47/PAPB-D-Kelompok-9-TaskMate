@@ -39,9 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskmate.ui.components.AppAlertDialog
 import com.example.taskmate.ui.components.DialogType
+import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
-import com.example.taskmate.ui.theme.BorderColor
-import com.example.taskmate.ui.theme.TextPrimary
 import com.example.taskmate.ui.theme.White
 
 @Composable
@@ -70,11 +69,12 @@ fun AddCourseScreen(
     }
 
     Scaffold(
-        containerColor = White,
+        containerColor = AppThemeColors.background,
         bottomBar = {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(AppThemeColors.background)
                     .padding(horizontal = 24.dp, vertical = 20.dp)
             ) {
                 Button(
@@ -98,7 +98,7 @@ fun AddCourseScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(White)
+                .background(AppThemeColors.background)
                 .padding(innerPadding)
                 .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState())
@@ -114,13 +114,13 @@ fun AddCourseScreen(
                     modifier = Modifier
                         .size(36.dp)
                         .clip(CircleShape)
-                        .border(1.5.dp, TextPrimary, CircleShape)
+                        .border(1.5.dp, AppThemeColors.textPrimary, CircleShape)
                         .clickable { onNavigateBack() }
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                         contentDescription = "Back",
-                        tint = TextPrimary,
+                        tint = AppThemeColors.textPrimary,
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(4.dp)
@@ -131,7 +131,7 @@ fun AddCourseScreen(
                     text = "Add Course",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = AppThemeColors.textPrimary,
                     modifier = Modifier.padding(top = 2.dp)
                 )
             }
@@ -139,7 +139,7 @@ fun AddCourseScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Course Title
-            Text("Course Title", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text("Course Title", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = courseTitle,
@@ -149,16 +149,18 @@ fun AddCourseScreen(
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor,
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedTextColor = AppThemeColors.textPrimary,
+                    unfocusedTextColor = AppThemeColors.textPrimary,
+                    focusedContainerColor = AppThemeColors.searchBarContainer,
+                    unfocusedContainerColor = AppThemeColors.searchBarContainer
                 )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Lecturer Name
-            Text("Lecturer Name", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text("Lecturer Name", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = lecturerName,
@@ -168,16 +170,18 @@ fun AddCourseScreen(
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor,
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedTextColor = AppThemeColors.textPrimary,
+                    unfocusedTextColor = AppThemeColors.textPrimary,
+                    focusedContainerColor = AppThemeColors.searchBarContainer,
+                    unfocusedContainerColor = AppThemeColors.searchBarContainer
                 )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Day
-            Text("Day", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text("Day", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = day,
@@ -187,9 +191,11 @@ fun AddCourseScreen(
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor,
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedTextColor = AppThemeColors.textPrimary,
+                    unfocusedTextColor = AppThemeColors.textPrimary,
+                    focusedContainerColor = AppThemeColors.searchBarContainer,
+                    unfocusedContainerColor = AppThemeColors.searchBarContainer
                 )
             )
 
@@ -201,7 +207,7 @@ fun AddCourseScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("Start Time", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                    Text("Start Time", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
                     Spacer(modifier = Modifier.height(6.dp))
                     OutlinedTextField(
                         value = startTime,
@@ -211,9 +217,11 @@ fun AddCourseScreen(
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = BlueNormal,
-                            unfocusedBorderColor = BorderColor,
-                            focusedContainerColor = White,
-                            unfocusedContainerColor = White
+                            unfocusedBorderColor = AppThemeColors.border,
+                            focusedTextColor = AppThemeColors.textPrimary,
+                            unfocusedTextColor = AppThemeColors.textPrimary,
+                            focusedContainerColor = AppThemeColors.searchBarContainer,
+                            unfocusedContainerColor = AppThemeColors.searchBarContainer
                         )
                     )
                 }
@@ -222,13 +230,13 @@ fun AddCourseScreen(
                     text = "-",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = AppThemeColors.textPrimary,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 36.dp)
                 )
 
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("End Time", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                    Text("End Time", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
                     Spacer(modifier = Modifier.height(6.dp))
                     OutlinedTextField(
                         value = endTime,
@@ -238,9 +246,11 @@ fun AddCourseScreen(
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = BlueNormal,
-                            unfocusedBorderColor = BorderColor,
-                            focusedContainerColor = White,
-                            unfocusedContainerColor = White
+                            unfocusedBorderColor = AppThemeColors.border,
+                            focusedTextColor = AppThemeColors.textPrimary,
+                            unfocusedTextColor = AppThemeColors.textPrimary,
+                            focusedContainerColor = AppThemeColors.searchBarContainer,
+                            unfocusedContainerColor = AppThemeColors.searchBarContainer
                         )
                     )
                 }
@@ -249,7 +259,7 @@ fun AddCourseScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Location
-            Text("Location", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text("Location", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = location,
@@ -259,9 +269,11 @@ fun AddCourseScreen(
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor,
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedTextColor = AppThemeColors.textPrimary,
+                    unfocusedTextColor = AppThemeColors.textPrimary,
+                    focusedContainerColor = AppThemeColors.searchBarContainer,
+                    unfocusedContainerColor = AppThemeColors.searchBarContainer
                 )
             )
 

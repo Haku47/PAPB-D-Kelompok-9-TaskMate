@@ -43,10 +43,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
-import com.example.taskmate.ui.theme.BorderColor
-import com.example.taskmate.ui.theme.TextPrimary
-import com.example.taskmate.ui.theme.TextSecondary
 import com.example.taskmate.ui.theme.White
 
 @Composable
@@ -62,11 +60,12 @@ fun ChangePasswordScreen(
     val fieldShape = RoundedCornerShape(10.dp)
 
     Scaffold(
-        containerColor = White,
+        containerColor = AppThemeColors.background,
         bottomBar = {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(AppThemeColors.background)
                     .padding(horizontal = 24.dp, vertical = 24.dp)
             ) {
                 Button(
@@ -90,7 +89,7 @@ fun ChangePasswordScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(White)
+                .background(AppThemeColors.background)
                 .padding(innerPadding)
                 .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState())
@@ -106,13 +105,13 @@ fun ChangePasswordScreen(
                     modifier = Modifier
                         .size(36.dp)
                         .clip(CircleShape)
-                        .border(1.5.dp, TextPrimary, CircleShape)
+                        .border(1.5.dp, AppThemeColors.textPrimary, CircleShape)
                         .clickable { onNavigateBack() }
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                         contentDescription = "Back",
-                        tint = TextPrimary,
+                        tint = AppThemeColors.textPrimary,
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(4.dp)
@@ -123,7 +122,7 @@ fun ChangePasswordScreen(
                     text = "Change Password",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = AppThemeColors.textPrimary,
                     modifier = Modifier.padding(top = 2.dp)
                 )
             }
@@ -135,13 +134,19 @@ fun ChangePasswordScreen(
                 text = "New Password",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary
+                color = AppThemeColors.textPrimary
             )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = newPassword,
                 onValueChange = { newPassword = it },
-                placeholder = { Text("Placeholder", color = TextSecondary, fontSize = 14.sp) },
+                placeholder = {
+                    Text(
+                        text = "Placeholder",
+                        color = AppThemeColors.textSecondary,
+                        fontSize = 14.sp
+                    )
+                },
                 modifier = Modifier.fillMaxWidth(),
                 shape = fieldShape,
                 singleLine = true,
@@ -152,16 +157,18 @@ fun ChangePasswordScreen(
                         Icon(
                             imageVector = if (isNewPasswordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                             contentDescription = if (isNewPasswordVisible) "Hide password" else "Show password",
-                            tint = TextPrimary,
+                            tint = AppThemeColors.textPrimary,
                             modifier = Modifier.size(22.dp)
                         )
                     }
                 },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor,
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedTextColor = AppThemeColors.textPrimary,
+                    unfocusedTextColor = AppThemeColors.textPrimary,
+                    focusedContainerColor = AppThemeColors.searchBarContainer,
+                    unfocusedContainerColor = AppThemeColors.searchBarContainer
                 )
             )
 
@@ -172,13 +179,19 @@ fun ChangePasswordScreen(
                 text = "Confirm New Password",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary
+                color = AppThemeColors.textPrimary
             )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = confirmNewPassword,
                 onValueChange = { confirmNewPassword = it },
-                placeholder = { Text("Placeholder", color = TextSecondary, fontSize = 14.sp) },
+                placeholder = {
+                    Text(
+                        text = "Placeholder",
+                        color = AppThemeColors.textSecondary,
+                        fontSize = 14.sp
+                    )
+                },
                 modifier = Modifier.fillMaxWidth(),
                 shape = fieldShape,
                 singleLine = true,
@@ -189,16 +202,18 @@ fun ChangePasswordScreen(
                         Icon(
                             imageVector = if (isConfirmPasswordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                             contentDescription = if (isConfirmPasswordVisible) "Hide password" else "Show password",
-                            tint = TextPrimary,
+                            tint = AppThemeColors.textPrimary,
                             modifier = Modifier.size(22.dp)
                         )
                     }
                 },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor,
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedTextColor = AppThemeColors.textPrimary,
+                    unfocusedTextColor = AppThemeColors.textPrimary,
+                    focusedContainerColor = AppThemeColors.searchBarContainer,
+                    unfocusedContainerColor = AppThemeColors.searchBarContainer
                 )
             )
 

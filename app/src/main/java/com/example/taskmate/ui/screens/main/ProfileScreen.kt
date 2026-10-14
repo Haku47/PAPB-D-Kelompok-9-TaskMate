@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -27,26 +26,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
-import com.example.taskmate.ui.theme.TextPrimary
-import com.example.taskmate.ui.theme.TextSecondary
-import com.example.taskmate.ui.theme.White
 
 @Composable
 fun ProfileScreen(
     onNavigateToSettings: () -> Unit
 ) {
-    val containerBlue = Color(0xFFDCEBFE) // Warna biru muda kartu profil Figma
-
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(White)
+            .background(AppThemeColors.background)
             .padding(horizontal = 24.dp)
     ) {
         Spacer(modifier = Modifier.height(20.dp))
@@ -59,7 +53,7 @@ fun ProfileScreen(
                 text = "Profile",
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
+                color = AppThemeColors.textPrimary,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -74,7 +68,7 @@ fun ProfileScreen(
                     Icon(
                         imageVector = Icons.Outlined.Settings,
                         contentDescription = "Settings",
-                        tint = TextPrimary,
+                        tint = AppThemeColors.textPrimary,
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -87,10 +81,11 @@ fun ProfileScreen(
         Box(
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Kontainer Kartu Biru Muda
+            // Kontainer Kartu Profil
             Surface(
-                color = containerBlue,
+                color = AppThemeColors.profileBannerBg,
                 shape = RoundedCornerShape(24.dp),
+                border = androidx.compose.foundation.BorderStroke(1.dp, AppThemeColors.border),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 45.dp) // Ruang untuk setengah lingkaran avatar
@@ -105,7 +100,7 @@ fun ProfileScreen(
                         text = "Madnesses Roman",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
+                        color = AppThemeColors.textPrimary,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -115,14 +110,14 @@ fun ProfileScreen(
                     Text(
                         text = "madnessesroman@abcde.xyz",
                         fontSize = 12.sp,
-                        color = TextSecondary,
+                        color = AppThemeColors.textSecondary,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Kartu Statistik (Putih di dalam Biru Muda)
+                    // Kartu Statistik
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(14.dp)
@@ -130,7 +125,8 @@ fun ProfileScreen(
                         Card(
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(12.dp),
-                            colors = CardDefaults.cardColors(containerColor = White),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, AppThemeColors.border),
+                            colors = CardDefaults.cardColors(containerColor = AppThemeColors.cardBackground),
                             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                         ) {
                             Column(
@@ -141,7 +137,7 @@ fun ProfileScreen(
                                 Text(
                                     text = "Tasks Finished",
                                     fontSize = 11.sp,
-                                    color = TextSecondary,
+                                    color = AppThemeColors.textSecondary,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.fillMaxWidth()
                                 )
@@ -150,7 +146,7 @@ fun ProfileScreen(
                                     text = "20",
                                     fontSize = 26.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = TextPrimary,
+                                    color = AppThemeColors.textPrimary,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.fillMaxWidth()
                                 )
@@ -160,7 +156,8 @@ fun ProfileScreen(
                         Card(
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(12.dp),
-                            colors = CardDefaults.cardColors(containerColor = White),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, AppThemeColors.border),
+                            colors = CardDefaults.cardColors(containerColor = AppThemeColors.cardBackground),
                             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                         ) {
                             Column(
@@ -171,7 +168,7 @@ fun ProfileScreen(
                                 Text(
                                     text = "Active Courses",
                                     fontSize = 11.sp,
-                                    color = TextSecondary,
+                                    color = AppThemeColors.textSecondary,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.fillMaxWidth()
                                 )
@@ -180,7 +177,7 @@ fun ProfileScreen(
                                     text = "8",
                                     fontSize = 26.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = TextPrimary,
+                                    color = AppThemeColors.textPrimary,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.fillMaxWidth()
                                 )
@@ -197,16 +194,16 @@ fun ProfileScreen(
             ) {
                 Surface(
                     shape = CircleShape,
-                    color = White,
+                    color = AppThemeColors.background,
                     modifier = Modifier
                         .size(90.dp)
-                        .border(3.dp, White, CircleShape)
+                        .border(3.dp, AppThemeColors.background, CircleShape)
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
                             .clip(CircleShape)
-                            .background(Color(0xFFE2E8F0))
+                            .background(AppThemeColors.avatarBg)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Person,

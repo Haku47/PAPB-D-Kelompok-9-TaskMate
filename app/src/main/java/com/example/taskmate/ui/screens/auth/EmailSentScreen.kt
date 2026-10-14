@@ -1,5 +1,6 @@
 package com.example.taskmate.ui.screens.auth
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -11,8 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
-import com.example.taskmate.ui.theme.TextPrimary
+import com.example.taskmate.ui.theme.White
 
 @Composable
 fun EmailSentScreen(
@@ -21,6 +23,7 @@ fun EmailSentScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(AppThemeColors.background)
             .padding(28.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
@@ -31,7 +34,7 @@ fun EmailSentScreen(
             text = "Email Sent!",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = TextPrimary
+            color = AppThemeColors.textPrimary
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -44,7 +47,12 @@ fun EmailSentScreen(
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(containerColor = BlueNormal)
         ) {
-            Text(text = "Back to Login", fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+            Text(
+                text = "Back to Login",
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = White
+            )
         }
     }
 }

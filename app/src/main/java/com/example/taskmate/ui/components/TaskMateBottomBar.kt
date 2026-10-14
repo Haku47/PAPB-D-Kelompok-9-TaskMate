@@ -25,6 +25,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.taskmate.navigation.BottomNavItem
 import com.example.taskmate.ui.theme.BlueNormal
+import com.example.taskmate.ui.theme.ThemeState
 import com.example.taskmate.ui.theme.White
 
 @Composable
@@ -40,6 +41,12 @@ fun TaskMateBottomBar(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
+    // Penyesuaian palet bottom bar saat Dark Mode
+    val barBackground = if (ThemeState.isDarkMode) Color(0xFF1E293B) else BlueNormal
+    val activePillBg = if (ThemeState.isDarkMode) BlueNormal else White
+    val activeIconTint = if (ThemeState.isDarkMode) White else BlueNormal
+    val inactiveIconTint = if (ThemeState.isDarkMode) Color(0xFF94A3B8) else White
+
     if (items.any { it.route == currentRoute }) {
         // Kontainer luar pemberi jarak mengambang (floating)
         Box(
@@ -48,7 +55,7 @@ fun TaskMateBottomBar(navController: NavController) {
                 .padding(start = 20.dp, end = 20.dp, bottom = 18.dp)
         ) {
             Surface(
-                color = BlueNormal,
+                color = barBackground,
                 shape = RoundedCornerShape(26.dp),
                 shadowElevation = 8.dp,
                 modifier = Modifier
@@ -73,7 +80,7 @@ fun TaskMateBottomBar(navController: NavController) {
                                 modifier = Modifier
                                     .size(46.dp)
                                     .clip(RoundedCornerShape(16.dp))
-                                    .background(if (isSelected) White else Color.Transparent)
+                                    .background(if (isSelected) activePillBg else Color.Transparent)
                                     .clickable(
                                         interactionSource = remember { MutableInteractionSource() },
                                         indication = null
@@ -92,7 +99,7 @@ fun TaskMateBottomBar(navController: NavController) {
                                 Icon(
                                     imageVector = item.icon,
                                     contentDescription = item.title,
-                                    tint = if (isSelected) BlueNormal else White,
+                                    tint = if (isSelected) activeIconTint else inactiveIconTint,
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .padding(11.dp)

@@ -31,16 +31,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskmate.data.DummyData
 import com.example.taskmate.ui.components.TaskItemCard
-import com.example.taskmate.ui.theme.BorderColor
-import com.example.taskmate.ui.theme.TextPrimary
-import com.example.taskmate.ui.theme.TextSecondary
-import com.example.taskmate.ui.theme.White
+import com.example.taskmate.ui.theme.AppThemeColors
 
 @Composable
 fun TasksListScreen(
@@ -57,7 +53,7 @@ fun TasksListScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(White)
+            .background(AppThemeColors.background)
     ) {
         Column(
             modifier = Modifier
@@ -70,7 +66,7 @@ fun TasksListScreen(
                 text = "Tasks List",
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary
+                color = AppThemeColors.textPrimary
             )
 
             Spacer(modifier = Modifier.height(14.dp))
@@ -82,24 +78,26 @@ fun TasksListScreen(
                     Text(
                         text = "Search task...",
                         fontSize = 13.sp,
-                        color = TextSecondary
+                        color = AppThemeColors.textSecondary
                     )
                 },
                 trailingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Search",
-                        tint = TextSecondary,
+                        tint = AppThemeColors.textSecondary,
                         modifier = Modifier.size(20.dp)
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = BorderColor,
-                    unfocusedBorderColor = BorderColor,
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    focusedBorderColor = AppThemeColors.border,
+                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedTextColor = AppThemeColors.textPrimary,
+                    unfocusedTextColor = AppThemeColors.textPrimary,
+                    focusedContainerColor = AppThemeColors.searchBarContainer,
+                    unfocusedContainerColor = AppThemeColors.searchBarContainer
                 ),
                 singleLine = true
             )
@@ -123,8 +121,8 @@ fun TasksListScreen(
         FloatingActionButton(
             onClick = onNavigateToAddTask,
             shape = CircleShape,
-            containerColor = Color(0xFFF1F5F9),
-            contentColor = TextPrimary,
+            containerColor = AppThemeColors.fabBackground,
+            contentColor = AppThemeColors.textPrimary,
             elevation = FloatingActionButtonDefaults.elevation(
                 defaultElevation = 6.dp,
                 pressedElevation = 2.dp

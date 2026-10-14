@@ -38,10 +38,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
-import com.example.taskmate.ui.theme.BorderColor
-import com.example.taskmate.ui.theme.TextPrimary
-import com.example.taskmate.ui.theme.TextSecondary
 import com.example.taskmate.ui.theme.White
 
 @Composable
@@ -53,11 +51,12 @@ fun ForgotPasswordScreen(
     val fieldShape = RoundedCornerShape(10.dp)
 
     Scaffold(
-        containerColor = White,
+        containerColor = AppThemeColors.background,
         bottomBar = {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(AppThemeColors.background)
                     .padding(horizontal = 24.dp, vertical = 24.dp)
             ) {
                 Button(
@@ -81,7 +80,7 @@ fun ForgotPasswordScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(White)
+                .background(AppThemeColors.background)
                 .padding(innerPadding)
                 .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState())
@@ -97,13 +96,13 @@ fun ForgotPasswordScreen(
                     modifier = Modifier
                         .size(36.dp)
                         .clip(CircleShape)
-                        .border(1.5.dp, TextPrimary, CircleShape)
+                        .border(1.5.dp, AppThemeColors.textPrimary, CircleShape)
                         .clickable { onNavigateBack() }
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                         contentDescription = "Back",
-                        tint = TextPrimary,
+                        tint = AppThemeColors.textPrimary,
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(4.dp)
@@ -114,7 +113,7 @@ fun ForgotPasswordScreen(
                     text = "Forgot Password?",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = AppThemeColors.textPrimary,
                     modifier = Modifier.padding(top = 2.dp)
                 )
             }
@@ -126,22 +125,30 @@ fun ForgotPasswordScreen(
                 text = "Email",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary
+                color = AppThemeColors.textPrimary
             )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                placeholder = { Text("Enter your email", color = TextSecondary, fontSize = 14.sp) },
+                placeholder = {
+                    Text(
+                        text = "Enter your email",
+                        color = AppThemeColors.textSecondary,
+                        fontSize = 14.sp
+                    )
+                },
                 modifier = Modifier.fillMaxWidth(),
                 shape = fieldShape,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor,
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedTextColor = AppThemeColors.textPrimary,
+                    unfocusedTextColor = AppThemeColors.textPrimary,
+                    focusedContainerColor = AppThemeColors.searchBarContainer,
+                    unfocusedContainerColor = AppThemeColors.searchBarContainer
                 )
             )
 

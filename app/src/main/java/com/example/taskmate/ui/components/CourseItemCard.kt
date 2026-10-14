@@ -24,11 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskmate.data.CourseItem
+import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
-import com.example.taskmate.ui.theme.BorderColor
-import com.example.taskmate.ui.theme.TextPrimary
-import com.example.taskmate.ui.theme.TextSecondary
-import com.example.taskmate.ui.theme.White
 
 @Composable
 fun CourseItemCard(
@@ -47,9 +44,9 @@ fun CourseItemCard(
             .height(IntrinsicSize.Min)
             .heightIn(min = 90.dp)
             .clickable { onClick() }
-            .border(1.dp, BorderColor, RoundedCornerShape(12.dp)),
+            .border(1.dp, AppThemeColors.border, RoundedCornerShape(12.dp)),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = White)
+        colors = CardDefaults.cardColors(containerColor = AppThemeColors.cardBackground)
     ) {
         Row(
             modifier = Modifier
@@ -74,19 +71,19 @@ fun CourseItemCard(
                     text = course.title,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary
+                    color = AppThemeColors.textPrimary
                 )
                 Spacer(modifier = Modifier.height(3.dp))
                 Text(
                     text = "${course.day}, $timeOnly",
                     fontSize = 12.sp,
-                    color = TextSecondary
+                    color = AppThemeColors.textSecondary
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = course.room,
                     fontSize = 12.sp,
-                    color = TextSecondary
+                    color = AppThemeColors.textSecondary
                 )
             }
         }

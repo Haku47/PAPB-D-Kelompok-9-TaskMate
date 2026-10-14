@@ -18,33 +18,36 @@ import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskmate.data.TaskItem
+import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueLight
 import com.example.taskmate.ui.theme.BlueNormal
-import com.example.taskmate.ui.theme.BorderColor
-import com.example.taskmate.ui.theme.TextPrimary
-import com.example.taskmate.ui.theme.TextSecondary
+import com.example.taskmate.ui.theme.ThemeState
 
 @Composable
 fun TaskItemCard(
     task: TaskItem,
     onClick: () -> Unit
 ) {
+    // Badge "X Days left": latar belakang lebih gelap dan teks tetap terbaca saat mode gelap
+    val badgeBg = if (ThemeState.isDarkMode) Color(0xFF1E3A5F) else BlueLight
+    val badgeTextColor = if (ThemeState.isDarkMode) Color(0xFF93C5FD) else BlueNormal
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .border(1.dp, BorderColor, RoundedCornerShape(12.dp)),
+            .border(1.dp, AppThemeColors.border, RoundedCornerShape(12.dp)),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(containerColor = AppThemeColors.cardBackground)
     ) {
         Column(
             modifier = Modifier
@@ -60,25 +63,25 @@ fun TaskItemCard(
                         imageVector = Icons.Outlined.Description,
                         contentDescription = null,
                         modifier = Modifier.size(16.dp),
-                        tint = TextPrimary
+                        tint = AppThemeColors.textPrimary
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = "TASK",
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary
+                        color = AppThemeColors.textPrimary
                     )
                 }
 
                 Surface(
                     shape = RoundedCornerShape(6.dp),
-                    color = BlueLight
+                    color = badgeBg
                 ) {
                     Text(
                         text = task.daysLeft,
                         fontSize = 10.sp,
-                        color = BlueNormal,
+                        color = badgeTextColor,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
                     )
@@ -91,18 +94,18 @@ fun TaskItemCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = task.title,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary
+                        color = AppThemeColors.textPrimary
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = task.course,
                         fontSize = 11.sp,
-                        color = TextSecondary
+                        color = AppThemeColors.textSecondary
                     )
                 }
 
@@ -111,13 +114,13 @@ fun TaskItemCard(
                         imageVector = Icons.Outlined.CalendarToday,
                         contentDescription = null,
                         modifier = Modifier.size(12.dp),
-                        tint = TextSecondary
+                        tint = AppThemeColors.textSecondary
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = task.dueDate,
                         fontSize = 10.sp,
-                        color = TextSecondary,
+                        color = AppThemeColors.textSecondary,
                         lineHeight = 12.sp
                     )
                 }

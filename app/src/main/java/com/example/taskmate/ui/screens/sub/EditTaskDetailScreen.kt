@@ -25,6 +25,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -36,15 +37,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskmate.ui.components.AppAlertDialog
 import com.example.taskmate.ui.components.DialogType
 import com.example.taskmate.ui.theme.BlueNormal
-import com.example.taskmate.ui.theme.BorderColor
-import com.example.taskmate.ui.theme.TextPrimary
-import com.example.taskmate.ui.theme.White
 
 @Composable
 fun EditTaskDetailScreen(
@@ -72,7 +71,7 @@ fun EditTaskDetailScreen(
     }
 
     Scaffold(
-        containerColor = White,
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             Box(
                 modifier = Modifier
@@ -91,7 +90,7 @@ fun EditTaskDetailScreen(
                         text = "Save Changes",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = White
+                        color = Color.White
                     )
                 }
             }
@@ -100,7 +99,7 @@ fun EditTaskDetailScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(White)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(innerPadding)
                 .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState())
@@ -116,13 +115,17 @@ fun EditTaskDetailScreen(
                     modifier = Modifier
                         .size(36.dp)
                         .clip(CircleShape)
-                        .border(1.5.dp, TextPrimary, CircleShape)
+                        .border(
+                            width = 1.5.dp,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            shape = CircleShape
+                        )
                         .clickable { onNavigateBack() }
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                         contentDescription = "Back",
-                        tint = TextPrimary,
+                        tint = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(4.dp)
@@ -133,7 +136,7 @@ fun EditTaskDetailScreen(
                     text = "Edit Task Detail",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(top = 2.dp)
                 )
             }
@@ -141,7 +144,12 @@ fun EditTaskDetailScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Task Title
-            Text("Task Title", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text(
+                text = "Task Title",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = title,
@@ -150,17 +158,24 @@ fun EditTaskDetailScreen(
                 shape = fieldShape,
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor,
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
                 )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Course Dropdown
-            Text("Course", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text(
+                text = "Course",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
             Spacer(modifier = Modifier.height(6.dp))
             Box(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
@@ -171,7 +186,7 @@ fun EditTaskDetailScreen(
                         Icon(
                             imageVector = Icons.Default.KeyboardArrowDown,
                             contentDescription = "Dropdown",
-                            tint = TextPrimary
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     },
                     modifier = Modifier
@@ -179,21 +194,29 @@ fun EditTaskDetailScreen(
                         .clickable { isCourseDropdownOpen = true },
                     shape = fieldShape,
                     colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                         focusedBorderColor = BlueNormal,
-                        unfocusedBorderColor = BorderColor,
-                        focusedContainerColor = White,
-                        unfocusedContainerColor = White
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface
                     )
                 )
 
                 DropdownMenu(
                     expanded = isCourseDropdownOpen,
                     onDismissRequest = { isCourseDropdownOpen = false },
-                    modifier = Modifier.background(White)
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
                 ) {
                     courseOptions.forEach { courseItem ->
                         DropdownMenuItem(
-                            text = { Text(courseItem, fontSize = 14.sp) },
+                            text = {
+                                Text(
+                                    text = courseItem,
+                                    fontSize = 14.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            },
                             onClick = {
                                 selectedCourse = courseItem
                                 isCourseDropdownOpen = false
@@ -206,7 +229,12 @@ fun EditTaskDetailScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Due Date
-            Text("Due Date", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text(
+                text = "Due Date",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = dueDate,
@@ -215,17 +243,24 @@ fun EditTaskDetailScreen(
                 shape = fieldShape,
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor,
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
                 )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Description
-            Text("Description", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text(
+                text = "Description",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = description,
@@ -235,10 +270,12 @@ fun EditTaskDetailScreen(
                     .height(110.dp),
                 shape = fieldShape,
                 colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = BorderColor,
-                    focusedContainerColor = White,
-                    unfocusedContainerColor = White
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
                 )
             )
 

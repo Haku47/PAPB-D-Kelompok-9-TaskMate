@@ -18,8 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskmate.R
-import com.example.taskmate.ui.theme.TextPrimary
-import com.example.taskmate.ui.theme.White
+import com.example.taskmate.ui.theme.AppThemeColors
 import kotlinx.coroutines.delay
 
 @Composable
@@ -35,7 +34,7 @@ fun SplashScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(White),
+            .background(AppThemeColors.background),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -52,7 +51,7 @@ fun SplashScreen(
             text = "TaskMate",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
-            color = TextPrimary
+            color = AppThemeColors.textPrimary
         )
     }
 }
