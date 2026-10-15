@@ -201,7 +201,7 @@ fun AddCourseScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Start Time & End Time dengan tanda strip di tengah
+            // Start Time & End Time
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -279,7 +279,7 @@ fun AddCourseScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Tombol "+ Another Session" (Biru Solid di Figma)
+            // Tombol "+ Another Session"
             Button(
                 onClick = { /* Handle tambah sesi */ },
                 modifier = Modifier

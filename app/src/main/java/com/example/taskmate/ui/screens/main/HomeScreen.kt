@@ -25,7 +25,7 @@ import com.example.taskmate.ui.theme.AppThemeColors
 fun HomeScreen(
     onNavigateToTaskDetail: (Int) -> Unit
 ) {
-    // Ambil 3 jadwal Selasa (JST D, PAPB D, Komputer Grafis D) dari schedules
+    // Ambil 3 jadwal
     val homeSchedules = DummyData.schedules.filter { it.day == "Tuesday" }
 
     LazyColumn(
@@ -53,7 +53,7 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(18.dp))
 
-            // Header Section Tasks + Divider tipis sesuai Figma
+            // Header Section Tasks + Divider
             Text(
                 text = "Tasks",
                 fontSize = 16.sp,
@@ -79,7 +79,7 @@ fun HomeScreen(
         item {
             Spacer(modifier = Modifier.height(14.dp))
 
-            // Header Section Your Schedule + Divider tipis sesuai Figma
+            // Header Section Your Schedule + Divider
             Text(
                 text = "Your Schedule",
                 fontSize = 16.sp,
@@ -94,7 +94,7 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(4.dp))
         }
 
-        // 3 Kartu Jadwal Selasa: JST D, PAPB D, Komputer Grafis D (model split card)
+        // 3 Kartu Jadwal
         items(homeSchedules) { schedule ->
             ScheduleItemCard(course = schedule)
         }

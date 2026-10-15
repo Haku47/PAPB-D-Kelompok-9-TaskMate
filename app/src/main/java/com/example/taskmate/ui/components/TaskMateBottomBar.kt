@@ -41,14 +41,14 @@ fun TaskMateBottomBar(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // Penyesuaian palet bottom bar saat Dark Mode
+    // Penyesuaian warna
     val barBackground = if (ThemeState.isDarkMode) Color(0xFF1E293B) else BlueNormal
     val activePillBg = if (ThemeState.isDarkMode) BlueNormal else White
     val activeIconTint = if (ThemeState.isDarkMode) White else BlueNormal
     val inactiveIconTint = if (ThemeState.isDarkMode) Color(0xFF94A3B8) else White
 
     if (items.any { it.route == currentRoute }) {
-        // Kontainer luar pemberi jarak mengambang (floating)
+        // Floating Bottom Bar
         Box(
             modifier = Modifier
                 .fillMaxWidth()

@@ -37,7 +37,7 @@ fun TaskItemCard(
     task: TaskItem,
     onClick: () -> Unit
 ) {
-    // Badge "X Days left": latar belakang lebih gelap dan teks tetap terbaca saat mode gelap
+    // Badge
     val badgeBg = if (ThemeState.isDarkMode) Color(0xFF1E3A5F) else BlueLight
     val badgeTextColor = if (ThemeState.isDarkMode) Color(0xFF93C5FD) else BlueNormal
 

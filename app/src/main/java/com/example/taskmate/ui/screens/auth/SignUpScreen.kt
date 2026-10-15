@@ -125,7 +125,7 @@ fun SignUpScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Password with toggle
+        // Password dengan toggle
         Column(modifier = Modifier.fillMaxWidth()) {
             Text("Password", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
@@ -161,7 +161,7 @@ fun SignUpScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Confirm Password with toggle
+        // Confirm Password dengan toggle
         Column(modifier = Modifier.fillMaxWidth()) {
             Text("Confirm Password", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))

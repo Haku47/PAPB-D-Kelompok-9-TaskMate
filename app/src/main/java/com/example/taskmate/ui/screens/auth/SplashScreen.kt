@@ -38,7 +38,7 @@ fun SplashScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Logo PNG dari res/drawable/ic_taskmate_logo.png
+        // Logo
         Image(
             painter = painterResource(id = R.drawable.ic_taskmate_logo),
             contentDescription = "TaskMate Logo",

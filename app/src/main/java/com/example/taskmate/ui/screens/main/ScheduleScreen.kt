@@ -47,7 +47,6 @@ fun ScheduleScreen() {
             contentPadding = PaddingValues(bottom = 120.dp),
             modifier = Modifier.fillMaxSize()
         ) {
-            // Section Monday
             item {
                 Text(
                     text = "Monday",
@@ -62,7 +61,6 @@ fun ScheduleScreen() {
                 ScheduleItemCard(course = course)
             }
 
-            // Section Tuesday
             item {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(

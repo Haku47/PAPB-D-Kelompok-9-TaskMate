@@ -161,7 +161,7 @@ fun AddTaskScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Description (Area input lebih tinggi sesuai Figma)
+            // Description
             Text("Description", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
@@ -183,7 +183,7 @@ fun AddTaskScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Course Dropdown (Sesuai Figma: ada Chevron Down)
+            // Course Dropdown
             Text("Course", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             Box(modifier = Modifier.fillMaxWidth()) {

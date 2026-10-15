@@ -110,7 +110,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(18.dp))
 
-        // Password with Show/Hide Toggle
+        // Password dengan Show/Hide Toggle
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = "Password",

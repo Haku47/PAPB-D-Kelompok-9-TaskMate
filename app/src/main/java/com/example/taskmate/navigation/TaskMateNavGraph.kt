@@ -23,7 +23,7 @@ fun TaskMateNavGraph(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // Daftar rute layar utama yang boleh memunculkan bottom navigation bar
+    // Daftar rute layar utama (bottom navigation bar)
     val mainTabs = listOf(
         Screen.Home.route,
         Screen.Courses.route,
@@ -37,7 +37,7 @@ fun TaskMateNavGraph(navController: NavHostController) {
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .statusBarsPadding() // Mencegah teks atas bertabrakan dengan status bar jam dan baterai HP
+            .statusBarsPadding() // Status Bar
     ) {
         NavHost(
             navController = navController,
@@ -214,7 +214,7 @@ fun TaskMateNavGraph(navController: NavHostController) {
             }
         }
 
-        // Floating Navbar di posisi paling bawah layar utama
+        // Floating Navbar
         if (shouldShowBottomBar) {
             Box(
                 modifier = Modifier.align(Alignment.BottomCenter)
