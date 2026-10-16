@@ -30,13 +30,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.taskmate.data.DummyData
 import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
+
+import com.example.taskmate.ui.theme.strings
 
 @Composable
 fun ProfileScreen(
     onNavigateToSettings: () -> Unit
 ) {
+    val s = strings
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -50,7 +54,7 @@ fun ProfileScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Profile",
+                text = s.profileTitle,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 color = AppThemeColors.textPrimary,
@@ -135,7 +139,7 @@ fun ProfileScreen(
                                     .padding(vertical = 16.dp, horizontal = 8.dp)
                             ) {
                                 Text(
-                                    text = "Tasks Finished",
+                                    text = s.tasksFinishedLabel,
                                     fontSize = 11.sp,
                                     color = AppThemeColors.textSecondary,
                                     textAlign = TextAlign.Center,
@@ -143,7 +147,7 @@ fun ProfileScreen(
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
-                                    text = "20",
+                                    text = DummyData.finishedTasksCount.toString(),
                                     fontSize = 26.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = AppThemeColors.textPrimary,
@@ -166,7 +170,7 @@ fun ProfileScreen(
                                     .padding(vertical = 16.dp, horizontal = 8.dp)
                             ) {
                                 Text(
-                                    text = "Active Courses",
+                                    text = s.activeCoursesLabel,
                                     fontSize = 11.sp,
                                     color = AppThemeColors.textSecondary,
                                     textAlign = TextAlign.Center,
@@ -174,7 +178,7 @@ fun ProfileScreen(
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
-                                    text = "8",
+                                    text = DummyData.courses.size.toString(),
                                     fontSize = 26.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = AppThemeColors.textPrimary,

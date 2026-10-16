@@ -19,15 +19,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -35,7 +39,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskmate.data.DummyData
+import com.example.taskmate.ui.components.AppAlertDialog
+import com.example.taskmate.ui.components.AppConfirmDialog
+import com.example.taskmate.ui.components.DialogType
+import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
+import com.example.taskmate.ui.theme.White
+
+import com.example.taskmate.ui.theme.strings
 
 @Composable
 fun TaskDetailScreen(
@@ -43,19 +54,53 @@ fun TaskDetailScreen(
     onNavigateBack: () -> Unit,
     onNavigateToEditTask: (Int) -> Unit
 ) {
+    val s = strings
     // Cari data task berdasarkan ID atau fallback ke task pertama
-    val task = DummyData.tasks.find { it.id == taskId } ?: DummyData.tasks.first()
+    val task = DummyData.getTaskById(taskId) ?: DummyData.tasks.firstOrNull() ?: return
+    var showDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        AppAlertDialog(
+            type = DialogType.TASK_FINISHED,
+            onDismiss = {
+                showDialog = false
+                onNavigateBack()
+            }
+        )
+    }
+
+    if (showDeleteDialog) {
+        AppConfirmDialog(
+            title = s.deleteTaskConfirmTitle,
+            message = s.deleteTaskConfirmMessage(task.title),
+            confirmText = s.deleteButton,
+            cancelText = s.cancelButton,
+            onConfirm = {
+                showDeleteDialog = false
+                DummyData.deleteTask(task.id)
+                onNavigateBack()
+            },
+            onDismiss = {
+                showDeleteDialog = false
+            }
+        )
+    }
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = AppThemeColors.background,
         bottomBar = {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(AppThemeColors.background)
                     .padding(horizontal = 24.dp, vertical = 20.dp)
             ) {
                 Button(
-                    onClick = onNavigateBack,
+                    onClick = {
+                        DummyData.markTaskFinished(task.id)
+                        showDialog = true
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -63,10 +108,10 @@ fun TaskDetailScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = BlueNormal)
                 ) {
                     Text(
-                        text = "Mark as Finished",
+                        text = s.markAsFinished,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = White
                     )
                 }
             }
@@ -75,7 +120,7 @@ fun TaskDetailScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(AppThemeColors.background)
                 .padding(innerPadding)
                 .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState())
@@ -96,7 +141,7 @@ fun TaskDetailScreen(
                             .clip(CircleShape)
                             .border(
                                 width = 1.5.dp,
-                                color = MaterialTheme.colorScheme.onBackground,
+                                color = AppThemeColors.textPrimary,
                                 shape = CircleShape
                             )
                             .clickable { onNavigateBack() }
@@ -104,7 +149,7 @@ fun TaskDetailScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                             contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onBackground,
+                            tint = AppThemeColors.textPrimary,
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(4.dp)
@@ -112,24 +157,40 @@ fun TaskDetailScreen(
                     }
 
                     Text(
-                        text = "Task Detail",
+                        text = s.taskDetailTitle,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground,
+                        color = AppThemeColors.textPrimary,
                         modifier = Modifier.padding(top = 2.dp)
                     )
                 }
 
-                IconButton(
-                    onClick = { onNavigateToEditTask(taskId) },
-                    modifier = Modifier.size(36.dp)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Edit,
-                        contentDescription = "Edit Task",
-                        tint = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.size(22.dp)
-                    )
+                    IconButton(
+                        onClick = { showDeleteDialog = true },
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Delete,
+                            contentDescription = "Delete Task",
+                            tint = Color(0xFFE53935),
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+
+                    IconButton(
+                        onClick = { onNavigateToEditTask(taskId) },
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Edit,
+                            contentDescription = "Edit Task",
+                            tint = AppThemeColors.textPrimary,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
                 }
             }
 
@@ -137,7 +198,7 @@ fun TaskDetailScreen(
 
             // Task Title
             DetailItem(
-                label = "Task Title",
+                label = s.taskTitleLabel,
                 value = task.title
             )
 
@@ -145,7 +206,7 @@ fun TaskDetailScreen(
 
             // Course
             DetailItem(
-                label = "Course",
+                label = s.courseLabel,
                 value = task.course
             )
 
@@ -153,23 +214,23 @@ fun TaskDetailScreen(
 
             // Due Date
             DetailItem(
-                label = "Due Date",
-                value = "Friday, Oct 16 - 11:59 PM"
+                label = s.dueDateLabel,
+                value = task.dueDate.replace("\n", " - ")
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             // Task Status
             DetailItem(
-                label = "Task Status",
-                value = task.status
+                label = s.taskStatusLabel,
+                value = s.translateStatus(task.status)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             // Description
             DetailItem(
-                label = "Description",
+                label = s.descriptionLabel,
                 value = task.description
             )
 
@@ -188,14 +249,14 @@ private fun DetailItem(
             text = label,
             fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = AppThemeColors.textSecondary
         )
         Spacer(modifier = Modifier.height(6.dp))
         Text(
             text = value,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = AppThemeColors.textPrimary,
             lineHeight = 22.sp
         )
     }

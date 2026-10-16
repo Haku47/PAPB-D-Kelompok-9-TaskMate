@@ -15,11 +15,14 @@ import androidx.compose.ui.unit.sp
 import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
 import com.example.taskmate.ui.theme.White
+import com.example.taskmate.ui.theme.strings
 
 @Composable
 fun EmailSentScreen(
     onBackToLogin: () -> Unit
 ) {
+    val s = strings
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -31,7 +34,7 @@ fun EmailSentScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         Text(
-            text = "Email Sent!",
+            text = s.emailSentTitle,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = AppThemeColors.textPrimary
@@ -48,7 +51,7 @@ fun EmailSentScreen(
             colors = ButtonDefaults.buttonColors(containerColor = BlueNormal)
         ) {
             Text(
-                text = "Back to Login",
+                text = s.backToLoginButton,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = White

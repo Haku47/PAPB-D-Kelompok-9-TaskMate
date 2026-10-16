@@ -42,12 +42,14 @@ import androidx.compose.ui.unit.sp
 import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
 import com.example.taskmate.ui.theme.White
+import com.example.taskmate.ui.theme.strings
 
 @Composable
 fun SignUpScreen(
     onSignUpSuccess: () -> Unit,
     onNavigateToLogin: () -> Unit
 ) {
+    val s = strings
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -68,7 +70,7 @@ fun SignUpScreen(
         Spacer(modifier = Modifier.height(60.dp))
 
         Text(
-            text = "Sign Up",
+            text = s.signUpTitle,
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             color = AppThemeColors.textPrimary
@@ -78,12 +80,12 @@ fun SignUpScreen(
 
         // Username
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text("Username", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
+            Text(s.usernameLabel, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = username,
                 onValueChange = { username = it },
-                placeholder = { Text("Enter your username", color = AppThemeColors.textSecondary, fontSize = 14.sp) },
+                placeholder = { Text(s.enterUsernamePlaceholder, color = AppThemeColors.textSecondary, fontSize = 14.sp) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = fieldShape,
                 singleLine = true,
@@ -102,12 +104,12 @@ fun SignUpScreen(
 
         // Email
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text("Email", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
+            Text(s.emailLabel, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                placeholder = { Text("Enter your email", color = AppThemeColors.textSecondary, fontSize = 14.sp) },
+                placeholder = { Text(s.enterEmailPlaceholder, color = AppThemeColors.textSecondary, fontSize = 14.sp) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = fieldShape,
                 singleLine = true,
@@ -127,12 +129,12 @@ fun SignUpScreen(
 
         // Password dengan toggle
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text("Password", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
+            Text(s.passwordLabel, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                placeholder = { Text("Enter your password", color = AppThemeColors.textSecondary, fontSize = 14.sp) },
+                placeholder = { Text(s.enterPasswordPlaceholder, color = AppThemeColors.textSecondary, fontSize = 14.sp) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = fieldShape,
                 singleLine = true,
@@ -163,12 +165,12 @@ fun SignUpScreen(
 
         // Confirm Password dengan toggle
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text("Confirm Password", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
+            Text(s.confirmPasswordLabel, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
-                placeholder = { Text("Enter your password", color = AppThemeColors.textSecondary, fontSize = 14.sp) },
+                placeholder = { Text(s.enterConfirmPasswordPlaceholder, color = AppThemeColors.textSecondary, fontSize = 14.sp) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = fieldShape,
                 singleLine = true,
@@ -207,7 +209,7 @@ fun SignUpScreen(
             colors = ButtonDefaults.buttonColors(containerColor = BlueNormal)
         ) {
             Text(
-                text = "Sign Up",
+                text = s.signUpButton,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = White
@@ -222,12 +224,12 @@ fun SignUpScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Already have an account? ",
+                text = s.alreadyHaveAccount,
                 fontSize = 13.sp,
                 color = AppThemeColors.textPrimary
             )
             Text(
-                text = "Login",
+                text = s.loginLink,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 color = AppThemeColors.textPrimary,

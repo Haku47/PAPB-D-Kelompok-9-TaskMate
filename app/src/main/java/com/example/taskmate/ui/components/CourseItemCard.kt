@@ -27,23 +27,40 @@ import com.example.taskmate.data.CourseItem
 import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
+import com.example.taskmate.ui.theme.strings
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CourseItemCard(
     course: CourseItem,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    onLongClick: (() -> Unit)? = null
 ) {
+    val s = strings
     val timeOnly = if (course.time.contains(",")) {
         course.time.substringAfter(",").trim()
     } else {
         course.time.trim()
     }
 
+    val clickModifier = if (onLongClick != null) {
+        Modifier.combinedClickable(
+            onClick = onClick,
+            onLongClick = onLongClick
+        )
+    } else {
+        Modifier.clickable { onClick() }
+    }
+
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
             .heightIn(min = 90.dp)
-            .clickable { onClick() }
+            .then(clickModifier)
             .border(1.dp, AppThemeColors.border, RoundedCornerShape(12.dp)),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = AppThemeColors.cardBackground)
@@ -75,7 +92,7 @@ fun CourseItemCard(
                 )
                 Spacer(modifier = Modifier.height(3.dp))
                 Text(
-                    text = "${course.day}, $timeOnly",
+                    text = "${s.translateDay(course.day)}, $timeOnly",
                     fontSize = 12.sp,
                     color = AppThemeColors.textSecondary
                 )

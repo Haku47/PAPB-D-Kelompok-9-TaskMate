@@ -39,25 +39,34 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.taskmate.data.DummyData
+import com.example.taskmate.data.TaskItem
 import com.example.taskmate.ui.components.AppAlertDialog
 import com.example.taskmate.ui.components.DialogType
 import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
 import com.example.taskmate.ui.theme.White
 
+import com.example.taskmate.ui.theme.strings
+
 @Composable
 fun AddTaskScreen(
     onNavigateBack: () -> Unit,
     onTaskAdded: () -> Unit
 ) {
+    val s = strings
+    val courseOptions = remember {
+        val dynamicCourses = (listOf("Course A") + DummyData.courses.map { it.title } + DummyData.schedules.map { it.title }).distinct()
+        if (dynamicCourses.isNotEmpty()) dynamicCourses else listOf("Course A", "PAPB D", "JST D", "Keamanan Jaringan A")
+    }
+
     var taskTitle by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    var selectedCourse by remember { mutableStateOf("") }
+    var selectedCourse by remember { mutableStateOf(courseOptions.firstOrNull() ?: "") }
     var dueDate by remember { mutableStateOf("") }
     var isCourseDropdownOpen by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
 
-    val courseOptions = listOf("PAPB D", "JST D", "Keamanan Jaringan A", "Komputer Grafis D")
     val fieldShape = RoundedCornerShape(10.dp)
 
     if (showDialog) {
@@ -80,7 +89,20 @@ fun AddTaskScreen(
                     .padding(horizontal = 24.dp, vertical = 20.dp)
             ) {
                 Button(
-                    onClick = { showDialog = true },
+                    onClick = {
+                        DummyData.addTask(
+                            TaskItem(
+                                id = DummyData.generateTaskId(),
+                                title = taskTitle.ifBlank { "Untitled Task" },
+                                course = selectedCourse.ifBlank { courseOptions.firstOrNull() ?: "General" },
+                                daysLeft = "7 Days left",
+                                dueDate = dueDate.ifBlank { "Due Friday, Oct 16\n11:59 PM" },
+                                status = "In Progress",
+                                description = description.ifBlank { "-" }
+                            )
+                        )
+                        showDialog = true
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -88,7 +110,7 @@ fun AddTaskScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = BlueNormal)
                 ) {
                     Text(
-                        text = "Add Task",
+                        text = s.addTaskTitle,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = White
@@ -130,7 +152,7 @@ fun AddTaskScreen(
                 }
 
                 Text(
-                    text = "Add Task",
+                    text = s.addTaskTitle,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = AppThemeColors.textPrimary,
@@ -141,7 +163,7 @@ fun AddTaskScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Task Title
-            Text("Task Title", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
+            Text(s.taskTitleLabel, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = taskTitle,
@@ -162,7 +184,7 @@ fun AddTaskScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Description
-            Text("Description", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
+            Text(s.descriptionLabel, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = description,
@@ -184,7 +206,7 @@ fun AddTaskScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Course Dropdown
-            Text("Course", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
+            Text(s.courseLabel, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             Box(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
@@ -238,7 +260,7 @@ fun AddTaskScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Due Date
-            Text("Due Date", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
+            Text(s.dueDateLabel, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = dueDate,

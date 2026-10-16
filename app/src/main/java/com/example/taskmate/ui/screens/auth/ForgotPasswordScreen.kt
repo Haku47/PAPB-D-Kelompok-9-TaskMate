@@ -41,12 +41,14 @@ import androidx.compose.ui.unit.sp
 import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
 import com.example.taskmate.ui.theme.White
+import com.example.taskmate.ui.theme.strings
 
 @Composable
 fun ForgotPasswordScreen(
     onSendEmail: () -> Unit,
     onNavigateBack: () -> Unit
 ) {
+    val s = strings
     var email by remember { mutableStateOf("") }
     val fieldShape = RoundedCornerShape(10.dp)
 
@@ -68,7 +70,7 @@ fun ForgotPasswordScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = BlueNormal)
                 ) {
                     Text(
-                        text = "Send Email",
+                        text = s.sendEmailButton,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = White
@@ -110,7 +112,7 @@ fun ForgotPasswordScreen(
                 }
 
                 Text(
-                    text = "Forgot Password?",
+                    text = s.forgotPasswordTitle,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = AppThemeColors.textPrimary,
@@ -122,7 +124,7 @@ fun ForgotPasswordScreen(
 
             // Email Field
             Text(
-                text = "Email",
+                text = s.emailLabel,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = AppThemeColors.textPrimary
@@ -133,7 +135,7 @@ fun ForgotPasswordScreen(
                 onValueChange = { email = it },
                 placeholder = {
                     Text(
-                        text = "Enter your email",
+                        text = s.enterEmailPlaceholder,
                         color = AppThemeColors.textSecondary,
                         fontSize = 14.sp
                     )

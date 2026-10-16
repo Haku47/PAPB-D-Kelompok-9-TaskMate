@@ -11,6 +11,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.taskmate.navigation.TaskMateNavGraph
 import com.example.taskmate.ui.theme.TaskmateTheme
 
+import androidx.compose.runtime.Composable
+import com.example.taskmate.ui.theme.ThemeState
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,10 +25,27 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            TaskmateTheme {
-                val navController = rememberNavController()
-                TaskMateNavGraph(navController = navController)
-            }
+            TaskmateApp()
         }
+    }
+}
+
+@Composable
+fun TaskmateApp() {
+    val darkTheme = ThemeState.isDarkMode
+    val fontSizeMode = ThemeState.fontSizeMode
+    val language = ThemeState.language
+
+    TaskmateTheme(
+        darkTheme = darkTheme,
+        fontSizeMode = fontSizeMode,
+        language = language
+    ) {
+        val navController = rememberNavController()
+        TaskMateNavGraph(
+            navController = navController,
+            fontSizeMode = fontSizeMode,
+            language = language
+        )
     }
 }

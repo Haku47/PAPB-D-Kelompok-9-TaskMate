@@ -22,7 +22,6 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -34,26 +33,40 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.taskmate.data.CourseItem
+import com.example.taskmate.data.DummyData
 import com.example.taskmate.ui.components.AppAlertDialog
+import com.example.taskmate.ui.components.CourseTimeHelper
+import com.example.taskmate.ui.components.CourseTimeInputField
 import com.example.taskmate.ui.components.DialogType
+import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
+import com.example.taskmate.ui.theme.White
+
+import com.example.taskmate.ui.theme.strings
 
 @Composable
 fun EditCourseScreen(
     courseId: Int,
     onNavigateBack: () -> Unit
 ) {
-    var courseTitle by remember { mutableStateOf("PAPB D") }
-    var lecturerName by remember { mutableStateOf("Dr. Eng. Herman Tolle, S.T., M.T.") }
-    var day by remember { mutableStateOf("Tuesday") }
-    var startTime by remember { mutableStateOf("09.35") }
-    var endTime by remember { mutableStateOf("11.15") }
-    var location by remember { mutableStateOf("Room RV1.3") }
+    val s = strings
+    val course = DummyData.getCourseById(courseId)
+
+    val initialTimes = remember(course) {
+        CourseTimeHelper.parseTimeRange(course?.time ?: "")
+    }
+
+    var courseTitle by remember(course) { mutableStateOf(course?.title ?: "") }
+    var lecturerName by remember(course) { mutableStateOf(course?.lecturer ?: "") }
+    var day by remember(course) { mutableStateOf(course?.day ?: "") }
+    var startTime by remember(course) { mutableStateOf(initialTimes.first) }
+    var endTime by remember(course) { mutableStateOf(initialTimes.second) }
+    var location by remember(course) { mutableStateOf(course?.room ?: "") }
     var showDialog by remember { mutableStateOf(false) }
 
     val fieldShape = RoundedCornerShape(10.dp)
@@ -69,15 +82,29 @@ fun EditCourseScreen(
     }
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = AppThemeColors.background,
         bottomBar = {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(AppThemeColors.background)
                     .padding(horizontal = 24.dp, vertical = 20.dp)
             ) {
                 Button(
-                    onClick = { showDialog = true },
+                    onClick = {
+                        val updatedTime = CourseTimeHelper.buildTimeRange(startTime, endTime)
+                        DummyData.updateCourse(
+                            CourseItem(
+                                id = courseId,
+                                title = courseTitle.ifBlank { course?.title ?: "" },
+                                day = day.ifBlank { course?.day ?: "" },
+                                time = updatedTime.ifBlank { course?.time ?: "" },
+                                room = location.ifBlank { course?.room ?: "" },
+                                lecturer = lecturerName.ifBlank { course?.lecturer ?: "" }
+                            )
+                        )
+                        showDialog = true
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -85,10 +112,10 @@ fun EditCourseScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = BlueNormal)
                 ) {
                     Text(
-                        text = "Edit Course",
+                        text = s.saveChanges,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = White
                     )
                 }
             }
@@ -97,7 +124,7 @@ fun EditCourseScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(AppThemeColors.background)
                 .padding(innerPadding)
                 .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState())
@@ -115,7 +142,7 @@ fun EditCourseScreen(
                         .clip(CircleShape)
                         .border(
                             width = 1.5.dp,
-                            color = MaterialTheme.colorScheme.onBackground,
+                            color = AppThemeColors.textPrimary,
                             shape = CircleShape
                         )
                         .clickable { onNavigateBack() }
@@ -123,7 +150,7 @@ fun EditCourseScreen(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                         contentDescription = "Back",
-                        tint = MaterialTheme.colorScheme.onBackground,
+                        tint = AppThemeColors.textPrimary,
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(4.dp)
@@ -131,10 +158,10 @@ fun EditCourseScreen(
                 }
 
                 Text(
-                    text = "Edit Course",
+                    text = s.editCourseTitle,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = AppThemeColors.textPrimary,
                     modifier = Modifier.padding(top = 2.dp)
                 )
             }
@@ -143,10 +170,10 @@ fun EditCourseScreen(
 
             // Course Title
             Text(
-                text = "Course Title",
+                text = s.courseTitleLabel,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
+                color = AppThemeColors.textPrimary
             )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
@@ -156,12 +183,12 @@ fun EditCourseScreen(
                 shape = fieldShape,
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedTextColor = AppThemeColors.textPrimary,
+                    unfocusedTextColor = AppThemeColors.textPrimary,
+                    focusedContainerColor = AppThemeColors.searchBarContainer,
+                    unfocusedContainerColor = AppThemeColors.searchBarContainer
                 )
             )
 
@@ -169,10 +196,10 @@ fun EditCourseScreen(
 
             // Lecturer Name
             Text(
-                text = "Lecturer Name",
+                text = s.lecturerNameLabel,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
+                color = AppThemeColors.textPrimary
             )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
@@ -182,12 +209,12 @@ fun EditCourseScreen(
                 shape = fieldShape,
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedTextColor = AppThemeColors.textPrimary,
+                    unfocusedTextColor = AppThemeColors.textPrimary,
+                    focusedContainerColor = AppThemeColors.searchBarContainer,
+                    unfocusedContainerColor = AppThemeColors.searchBarContainer
                 )
             )
 
@@ -195,10 +222,10 @@ fun EditCourseScreen(
 
             // Day
             Text(
-                text = "Day",
+                text = s.dayFieldLabel,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
+                color = AppThemeColors.textPrimary
             )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
@@ -208,12 +235,12 @@ fun EditCourseScreen(
                 shape = fieldShape,
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedTextColor = AppThemeColors.textPrimary,
+                    unfocusedTextColor = AppThemeColors.textPrimary,
+                    focusedContainerColor = AppThemeColors.searchBarContainer,
+                    unfocusedContainerColor = AppThemeColors.searchBarContainer
                 )
             )
 
@@ -222,76 +249,31 @@ fun EditCourseScreen(
             // Start Time & End Time
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "Start Time",
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    OutlinedTextField(
-                        value = startTime,
-                        onValueChange = { startTime = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = fieldShape,
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            focusedBorderColor = BlueNormal,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                            focusedContainerColor = MaterialTheme.colorScheme.surface,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surface
-                        )
-                    )
-                }
-
-                Text(
-                    text = "-",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 36.dp)
+                CourseTimeInputField(
+                    label = s.startTimeLabel,
+                    value = startTime,
+                    onValueChange = { startTime = it },
+                    modifier = Modifier.weight(1f)
                 )
 
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "End Time",
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    OutlinedTextField(
-                        value = endTime,
-                        onValueChange = { endTime = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = fieldShape,
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            focusedBorderColor = BlueNormal,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                            focusedContainerColor = MaterialTheme.colorScheme.surface,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surface
-                        )
-                    )
-                }
+                CourseTimeInputField(
+                    label = s.endTimeLabel,
+                    value = endTime,
+                    onValueChange = { endTime = it },
+                    modifier = Modifier.weight(1f)
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Location
             Text(
-                text = "Location",
+                text = s.locationLabel,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
+                color = AppThemeColors.textPrimary
             )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
@@ -301,12 +283,12 @@ fun EditCourseScreen(
                 shape = fieldShape,
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                     focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedTextColor = AppThemeColors.textPrimary,
+                    unfocusedTextColor = AppThemeColors.textPrimary,
+                    focusedContainerColor = AppThemeColors.searchBarContainer,
+                    unfocusedContainerColor = AppThemeColors.searchBarContainer
                 )
             )
 
@@ -322,10 +304,10 @@ fun EditCourseScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = BlueNormal)
             ) {
                 Text(
-                    text = "+ Another Session",
+                    text = s.anotherSessionButton,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color.White
+                    color = White
                 )
             }
 

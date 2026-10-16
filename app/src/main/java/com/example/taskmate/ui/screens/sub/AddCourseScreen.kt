@@ -37,22 +37,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.taskmate.data.CourseItem
+import com.example.taskmate.data.DummyData
 import com.example.taskmate.ui.components.AppAlertDialog
+import com.example.taskmate.ui.components.CourseTimeHelper
+import com.example.taskmate.ui.components.CourseTimeInputField
 import com.example.taskmate.ui.components.DialogType
 import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
 import com.example.taskmate.ui.theme.White
+
+import com.example.taskmate.ui.theme.strings
 
 @Composable
 fun AddCourseScreen(
     onNavigateBack: () -> Unit,
     onCourseAdded: () -> Unit
 ) {
+    val s = strings
     var courseTitle by remember { mutableStateOf("") }
     var lecturerName by remember { mutableStateOf("") }
     var day by remember { mutableStateOf("") }
-    var startTime by remember { mutableStateOf("09.35") }
-    var endTime by remember { mutableStateOf("11.15") }
+    var startTime by remember { mutableStateOf("09:35 AM") }
+    var endTime by remember { mutableStateOf("11:15 AM") }
     var location by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
 
@@ -78,7 +85,20 @@ fun AddCourseScreen(
                     .padding(horizontal = 24.dp, vertical = 20.dp)
             ) {
                 Button(
-                    onClick = { showDialog = true },
+                    onClick = {
+                        val updatedTime = CourseTimeHelper.buildTimeRange(startTime, endTime)
+                        DummyData.addCourse(
+                            CourseItem(
+                                id = DummyData.generateCourseId(),
+                                title = courseTitle.ifBlank { "Untitled Course" },
+                                day = day.ifBlank { "Monday" },
+                                time = updatedTime.ifBlank { "08:00 AM - 10:00 AM" },
+                                room = location.ifBlank { "Room -" },
+                                lecturer = lecturerName.ifBlank { "-" }
+                            )
+                        )
+                        showDialog = true
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -86,7 +106,7 @@ fun AddCourseScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = BlueNormal)
                 ) {
                     Text(
-                        text = "Add Course",
+                        text = s.addCourseTitle,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = White
@@ -128,7 +148,7 @@ fun AddCourseScreen(
                 }
 
                 Text(
-                    text = "Add Course",
+                    text = s.addCourseTitle,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = AppThemeColors.textPrimary,
@@ -139,7 +159,7 @@ fun AddCourseScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Course Title
-            Text("Course Title", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
+            Text(s.courseTitleLabel, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = courseTitle,
@@ -160,7 +180,7 @@ fun AddCourseScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Lecturer Name
-            Text("Lecturer Name", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
+            Text(s.lecturerNameLabel, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = lecturerName,
@@ -181,7 +201,7 @@ fun AddCourseScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Day
-            Text("Day", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
+            Text(s.dayFieldLabel, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = day,
@@ -204,62 +224,27 @@ fun AddCourseScreen(
             // Start Time & End Time
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text("Start Time", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
-                    Spacer(modifier = Modifier.height(6.dp))
-                    OutlinedTextField(
-                        value = startTime,
-                        onValueChange = { startTime = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = fieldShape,
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = BlueNormal,
-                            unfocusedBorderColor = AppThemeColors.border,
-                            focusedTextColor = AppThemeColors.textPrimary,
-                            unfocusedTextColor = AppThemeColors.textPrimary,
-                            focusedContainerColor = AppThemeColors.searchBarContainer,
-                            unfocusedContainerColor = AppThemeColors.searchBarContainer
-                        )
-                    )
-                }
-
-                Text(
-                    text = "-",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = AppThemeColors.textPrimary,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 36.dp)
+                CourseTimeInputField(
+                    label = s.startTimeLabel,
+                    value = startTime,
+                    onValueChange = { startTime = it },
+                    modifier = Modifier.weight(1f)
                 )
 
-                Column(modifier = Modifier.weight(1f)) {
-                    Text("End Time", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
-                    Spacer(modifier = Modifier.height(6.dp))
-                    OutlinedTextField(
-                        value = endTime,
-                        onValueChange = { endTime = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = fieldShape,
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = BlueNormal,
-                            unfocusedBorderColor = AppThemeColors.border,
-                            focusedTextColor = AppThemeColors.textPrimary,
-                            unfocusedTextColor = AppThemeColors.textPrimary,
-                            focusedContainerColor = AppThemeColors.searchBarContainer,
-                            unfocusedContainerColor = AppThemeColors.searchBarContainer
-                        )
-                    )
-                }
+                CourseTimeInputField(
+                    label = s.endTimeLabel,
+                    value = endTime,
+                    onValueChange = { endTime = it },
+                    modifier = Modifier.weight(1f)
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Location
-            Text("Location", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
+            Text(s.locationLabel, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = AppThemeColors.textPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
                 value = location,
@@ -289,7 +274,7 @@ fun AddCourseScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = BlueNormal)
             ) {
                 Text(
-                    text = "+ Another Session",
+                    text = s.anotherSessionButton,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = White

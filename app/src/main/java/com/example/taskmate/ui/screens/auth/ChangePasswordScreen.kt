@@ -46,12 +46,14 @@ import androidx.compose.ui.unit.sp
 import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
 import com.example.taskmate.ui.theme.White
+import com.example.taskmate.ui.theme.strings
 
 @Composable
 fun ChangePasswordScreen(
     onChangeSuccess: () -> Unit,
     onNavigateBack: () -> Unit
 ) {
+    val s = strings
     var newPassword by remember { mutableStateOf("") }
     var confirmNewPassword by remember { mutableStateOf("") }
     var isNewPasswordVisible by remember { mutableStateOf(false) }
@@ -77,7 +79,7 @@ fun ChangePasswordScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = BlueNormal)
                 ) {
                     Text(
-                        text = "Change Password",
+                        text = s.savePasswordButton,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = White
@@ -119,7 +121,7 @@ fun ChangePasswordScreen(
                 }
 
                 Text(
-                    text = "Change Password",
+                    text = s.changePasswordTitle,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = AppThemeColors.textPrimary,
@@ -131,7 +133,7 @@ fun ChangePasswordScreen(
 
             // New Password with toggle
             Text(
-                text = "New Password",
+                text = s.newPasswordLabel,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = AppThemeColors.textPrimary
@@ -142,7 +144,7 @@ fun ChangePasswordScreen(
                 onValueChange = { newPassword = it },
                 placeholder = {
                     Text(
-                        text = "Placeholder",
+                        text = s.enterNewPasswordPlaceholder,
                         color = AppThemeColors.textSecondary,
                         fontSize = 14.sp
                     )
@@ -176,7 +178,7 @@ fun ChangePasswordScreen(
 
             // Confirm New Password with toggle
             Text(
-                text = "Confirm New Password",
+                text = s.confirmNewPasswordLabel,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = AppThemeColors.textPrimary
@@ -187,7 +189,7 @@ fun ChangePasswordScreen(
                 onValueChange = { confirmNewPassword = it },
                 placeholder = {
                     Text(
-                        text = "Placeholder",
+                        text = s.enterConfirmNewPasswordPlaceholder,
                         color = AppThemeColors.textSecondary,
                         fontSize = 14.sp
                     )

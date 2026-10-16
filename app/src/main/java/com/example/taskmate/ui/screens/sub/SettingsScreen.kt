@@ -39,14 +39,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.taskmate.ui.theme.AppLanguage
 import com.example.taskmate.ui.theme.BackgroundDark
 import com.example.taskmate.ui.theme.BlueNormal
 import com.example.taskmate.ui.theme.SurfaceCardDark
+import com.example.taskmate.ui.theme.FontSizeMode
 import com.example.taskmate.ui.theme.SurfaceDark
 import com.example.taskmate.ui.theme.TextPrimary
 import com.example.taskmate.ui.theme.TextPrimaryDark
+import com.example.taskmate.ui.theme.ThemeMode
 import com.example.taskmate.ui.theme.ThemeState
 import com.example.taskmate.ui.theme.White
+import com.example.taskmate.ui.theme.strings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,12 +58,21 @@ fun SettingsScreen(
     onNavigateBack: () -> Unit,
     onLogout: () -> Unit
 ) {
-    val systemInDark = isSystemInDarkTheme()
-    var displayMode by remember {
-        mutableStateOf(if (ThemeState.isDarkMode) "Dark" else "Light")
+    val s = strings
+    val currentDisplayMode = when (ThemeState.themeMode) {
+        ThemeMode.SYSTEM -> s.modeSystem
+        ThemeMode.LIGHT -> s.modeLight
+        ThemeMode.DARK -> s.modeDark
     }
-    var fontSize by remember { mutableStateOf("Regular") }
-    var language by remember { mutableStateOf("English") }
+    val currentFontSize = when (ThemeState.fontSizeMode) {
+        FontSizeMode.SMALL -> s.fontSizeSmall
+        FontSizeMode.REGULAR -> s.fontSizeRegular
+        FontSizeMode.LARGE -> s.fontSizeLarge
+    }
+    val currentLanguage = when (ThemeState.language) {
+        AppLanguage.ENGLISH -> s.langEnglish
+        AppLanguage.INDONESIAN -> s.langIndonesian
+    }
 
     val isDark = ThemeState.isDarkMode
     val currentBg = if (isDark) BackgroundDark else White
@@ -71,7 +84,7 @@ fun SettingsScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Settings",
+                        text = s.settingsTitle,
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
                         color = currentText
@@ -99,29 +112,39 @@ fun SettingsScreen(
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 SettingRowDropdown(
-                    label = "Display Mode",
-                    selectedValue = displayMode,
-                    options = listOf("Light", "Dark", "System"),
+                    label = s.displayModeLabel,
+                    selectedValue = currentDisplayMode,
+                    options = listOf(s.modeSystem, s.modeLight, s.modeDark),
                     onOptionSelected = { selected ->
-                        displayMode = selected
-                        ThemeState.isDarkMode = when (selected) {
-                            "Dark" -> true
-                            "Light" -> false
-                            else -> systemInDark
+                        ThemeState.themeMode = when (selected) {
+                            s.modeDark -> ThemeMode.DARK
+                            s.modeLight -> ThemeMode.LIGHT
+                            else -> ThemeMode.SYSTEM
                         }
                     }
                 )
                 SettingRowDropdown(
-                    label = "Font Size",
-                    selectedValue = fontSize,
-                    options = listOf("Small", "Regular", "Large"),
-                    onOptionSelected = { fontSize = it }
+                    label = s.fontSizeLabel,
+                    selectedValue = currentFontSize,
+                    options = listOf(s.fontSizeSmall, s.fontSizeRegular, s.fontSizeLarge),
+                    onOptionSelected = { selected ->
+                        ThemeState.fontSizeMode = when (selected) {
+                            s.fontSizeSmall -> FontSizeMode.SMALL
+                            s.fontSizeLarge -> FontSizeMode.LARGE
+                            else -> FontSizeMode.REGULAR
+                        }
+                    }
                 )
                 SettingRowDropdown(
-                    label = "Language",
-                    selectedValue = language,
-                    options = listOf("English", "Indonesian"),
-                    onOptionSelected = { language = it }
+                    label = s.languageLabel,
+                    selectedValue = currentLanguage,
+                    options = listOf(s.langEnglish, s.langIndonesian),
+                    onOptionSelected = { selected ->
+                        ThemeState.language = when (selected) {
+                            s.langIndonesian, "Indonesian", "Indonesia" -> AppLanguage.INDONESIAN
+                            else -> AppLanguage.ENGLISH
+                        }
+                    }
                 )
             }
 
@@ -134,7 +157,7 @@ fun SettingsScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = BlueNormal)
             ) {
                 Text(
-                    text = "Log Out",
+                    text = s.logoutButton,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 15.sp,
                     color = White

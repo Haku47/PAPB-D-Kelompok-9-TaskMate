@@ -34,20 +34,45 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import com.example.taskmate.data.DummyData
+import com.example.taskmate.data.TaskItem
+import com.example.taskmate.ui.components.AppConfirmDialog
 import com.example.taskmate.ui.components.TaskItemCard
 import com.example.taskmate.ui.theme.AppThemeColors
+
+import com.example.taskmate.ui.theme.strings
 
 @Composable
 fun TasksListScreen(
     onNavigateToAddTask: () -> Unit,
     onNavigateToTaskDetail: (Int) -> Unit
 ) {
+    val s = strings
+    val haptic = LocalHapticFeedback.current
     var searchQuery by remember { mutableStateOf("") }
+    var taskToDelete by remember { mutableStateOf<TaskItem?>(null) }
 
     val filteredTasks = DummyData.tasks.filter {
         it.title.contains(searchQuery, ignoreCase = true) ||
                 it.course.contains(searchQuery, ignoreCase = true)
+    }
+
+    taskToDelete?.let { task ->
+        AppConfirmDialog(
+            title = s.deleteTaskConfirmTitle,
+            message = s.deleteTaskConfirmMessage(task.title),
+            confirmText = s.deleteButton,
+            cancelText = s.cancelButton,
+            onConfirm = {
+                DummyData.deleteTask(task.id)
+                taskToDelete = null
+            },
+            onDismiss = {
+                taskToDelete = null
+            }
+        )
     }
 
     Box(
@@ -63,7 +88,7 @@ fun TasksListScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = "Tasks List",
+                text = s.tasksListTitle,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 color = AppThemeColors.textPrimary
@@ -76,7 +101,7 @@ fun TasksListScreen(
                 onValueChange = { searchQuery = it },
                 placeholder = {
                     Text(
-                        text = "Search task...",
+                        text = s.searchTaskPlaceholder,
                         fontSize = 13.sp,
                         color = AppThemeColors.textSecondary
                     )
@@ -109,10 +134,18 @@ fun TasksListScreen(
                 contentPadding = PaddingValues(top = 4.dp, bottom = 120.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(filteredTasks) { task ->
+                items(
+                    items = filteredTasks,
+                    key = { it.id }
+                ) { task ->
                     TaskItemCard(
                         task = task,
-                        onClick = { onNavigateToTaskDetail(task.id) }
+                        onClick = { onNavigateToTaskDetail(task.id) },
+                        onLongClick = {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            taskToDelete = task
+                        },
+                        modifier = Modifier.animateItem()
                     )
                 }
             }
@@ -122,7 +155,7 @@ fun TasksListScreen(
             onClick = onNavigateToAddTask,
             shape = CircleShape,
             containerColor = AppThemeColors.fabBackground,
-            contentColor = AppThemeColors.textPrimary,
+            contentColor = AppThemeColors.fabContentColor,
             elevation = FloatingActionButtonDefaults.elevation(
                 defaultElevation = 6.dp,
                 pressedElevation = 2.dp
@@ -134,7 +167,7 @@ fun TasksListScreen(
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
-                contentDescription = "Add Task",
+                contentDescription = s.addTaskFab,
                 modifier = Modifier.size(26.dp)
             )
         }

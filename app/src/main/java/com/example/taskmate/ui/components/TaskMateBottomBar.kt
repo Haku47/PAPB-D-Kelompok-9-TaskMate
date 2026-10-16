@@ -25,8 +25,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.taskmate.navigation.BottomNavItem
 import com.example.taskmate.ui.theme.BlueNormal
+import com.example.taskmate.ui.theme.BottomBarDark
 import com.example.taskmate.ui.theme.ThemeState
 import com.example.taskmate.ui.theme.White
+import com.example.taskmate.ui.theme.strings
 
 @Composable
 fun TaskMateBottomBar(navController: NavController) {
@@ -42,7 +44,7 @@ fun TaskMateBottomBar(navController: NavController) {
     val currentRoute = navBackStackEntry?.destination?.route
 
     // Penyesuaian warna
-    val barBackground = if (ThemeState.isDarkMode) Color(0xFF1E293B) else BlueNormal
+    val barBackground = if (ThemeState.isDarkMode) BottomBarDark else BlueNormal
     val activePillBg = if (ThemeState.isDarkMode) BlueNormal else White
     val activeIconTint = if (ThemeState.isDarkMode) White else BlueNormal
     val inactiveIconTint = if (ThemeState.isDarkMode) Color(0xFF94A3B8) else White
@@ -96,9 +98,17 @@ fun TaskMateBottomBar(navController: NavController) {
                                         }
                                     }
                             ) {
+                                val s = strings
+                                val desc = when (item) {
+                                    BottomNavItem.Home -> s.navHome
+                                    BottomNavItem.Courses -> s.navCourses
+                                    BottomNavItem.Tasks -> s.navTasks
+                                    BottomNavItem.Schedule -> s.navSchedule
+                                    BottomNavItem.Profile -> s.navProfile
+                                }
                                 Icon(
                                     imageVector = item.icon,
-                                    contentDescription = item.title,
+                                    contentDescription = desc,
                                     tint = if (isSelected) activeIconTint else inactiveIconTint,
                                     modifier = Modifier
                                         .fillMaxSize()

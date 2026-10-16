@@ -32,19 +32,36 @@ import com.example.taskmate.ui.theme.BlueLight
 import com.example.taskmate.ui.theme.BlueNormal
 import com.example.taskmate.ui.theme.ThemeState
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
+import com.example.taskmate.ui.theme.strings
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TaskItemCard(
     task: TaskItem,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    onLongClick: (() -> Unit)? = null
 ) {
+    val s = strings
     // Badge
     val badgeBg = if (ThemeState.isDarkMode) Color(0xFF1E3A5F) else BlueLight
     val badgeTextColor = if (ThemeState.isDarkMode) Color(0xFF93C5FD) else BlueNormal
 
+    val clickModifier = if (onLongClick != null) {
+        Modifier.combinedClickable(
+            onClick = onClick,
+            onLongClick = onLongClick
+        )
+    } else {
+        Modifier.clickable { onClick() }
+    }
+
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+            .then(clickModifier)
             .border(1.dp, AppThemeColors.border, RoundedCornerShape(12.dp)),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = AppThemeColors.cardBackground)
@@ -67,7 +84,7 @@ fun TaskItemCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "TASK",
+                        text = s.taskBadge,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         color = AppThemeColors.textPrimary
@@ -79,7 +96,7 @@ fun TaskItemCard(
                     color = badgeBg
                 ) {
                     Text(
-                        text = task.daysLeft,
+                        text = s.formatDaysLeft(task.daysLeft),
                         fontSize = 10.sp,
                         color = badgeTextColor,
                         fontWeight = FontWeight.SemiBold,

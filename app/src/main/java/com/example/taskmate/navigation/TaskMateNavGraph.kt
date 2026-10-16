@@ -10,16 +10,28 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
 import com.example.taskmate.ui.components.TaskMateBottomBar
 import com.example.taskmate.ui.screens.auth.*
 import com.example.taskmate.ui.screens.main.*
 import com.example.taskmate.ui.screens.sub.*
+import com.example.taskmate.ui.theme.AppLanguage
+import com.example.taskmate.ui.theme.FontSizeMode
+import com.example.taskmate.ui.theme.ThemeState
 
 @Composable
-fun TaskMateNavGraph(navController: NavHostController) {
+fun TaskMateNavGraph(
+    navController: NavHostController,
+    fontSizeMode: FontSizeMode = ThemeState.fontSizeMode,
+    language: AppLanguage = ThemeState.language
+) {
+    // Explicit read to register recomposition when font size mode or language changes
+    val activeFontSizeMode = fontSizeMode
+    val activeLanguage = language
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
@@ -119,8 +131,8 @@ fun TaskMateNavGraph(navController: NavHostController) {
             // --- 2. MAIN TABS (BOTTOM NAVIGATION) ---
             composable(Screen.Home.route) {
                 HomeScreen(
-                    onNavigateToTaskDetail = { _ ->
-                        navController.navigate(Screen.TaskDetail.route)
+                    onNavigateToTaskDetail = { taskId ->
+                        navController.navigate(Screen.TaskDetail.createRoute(taskId))
                     }
                 )
             }
@@ -128,8 +140,8 @@ fun TaskMateNavGraph(navController: NavHostController) {
             composable(Screen.Courses.route) {
                 CourseListScreen(
                     onNavigateToAddCourse = { navController.navigate(Screen.AddCourse.route) },
-                    onNavigateToCourseDetail = { _ ->
-                        navController.navigate(Screen.CourseDetail.route)
+                    onNavigateToCourseDetail = { courseId ->
+                        navController.navigate(Screen.CourseDetail.createRoute(courseId))
                     }
                 )
             }
@@ -137,8 +149,8 @@ fun TaskMateNavGraph(navController: NavHostController) {
             composable(Screen.Tasks.route) {
                 TasksListScreen(
                     onNavigateToAddTask = { navController.navigate(Screen.AddTask.route) },
-                    onNavigateToTaskDetail = { _ ->
-                        navController.navigate(Screen.TaskDetail.route)
+                    onNavigateToTaskDetail = { taskId ->
+                        navController.navigate(Screen.TaskDetail.createRoute(taskId))
                     }
                 )
             }
@@ -154,12 +166,16 @@ fun TaskMateNavGraph(navController: NavHostController) {
             }
 
             // --- 3. SUB SCREENS (CRUD & DETAIL) ---
-            composable(Screen.TaskDetail.route) {
+            composable(
+                route = Screen.TaskDetail.route,
+                arguments = listOf(navArgument("taskId") { type = NavType.IntType; defaultValue = 1 })
+            ) { backStackEntry ->
+                val taskId = backStackEntry.arguments?.getInt("taskId") ?: 1
                 TaskDetailScreen(
-                    taskId = 1,
+                    taskId = taskId,
                     onNavigateBack = { navController.popBackStack() },
-                    onNavigateToEditTask = { _ ->
-                        navController.navigate(Screen.EditTaskDetail.route)
+                    onNavigateToEditTask = { id ->
+                        navController.navigate(Screen.EditTaskDetail.createRoute(id))
                     }
                 )
             }
@@ -171,19 +187,27 @@ fun TaskMateNavGraph(navController: NavHostController) {
                 )
             }
 
-            composable(Screen.EditTaskDetail.route) {
+            composable(
+                route = Screen.EditTaskDetail.route,
+                arguments = listOf(navArgument("taskId") { type = NavType.IntType; defaultValue = 1 })
+            ) { backStackEntry ->
+                val taskId = backStackEntry.arguments?.getInt("taskId") ?: 1
                 EditTaskDetailScreen(
-                    taskId = 1,
+                    taskId = taskId,
                     onNavigateBack = { navController.popBackStack() }
                 )
             }
 
-            composable(Screen.CourseDetail.route) {
+            composable(
+                route = Screen.CourseDetail.route,
+                arguments = listOf(navArgument("courseId") { type = NavType.IntType; defaultValue = 1 })
+            ) { backStackEntry ->
+                val courseId = backStackEntry.arguments?.getInt("courseId") ?: 1
                 CourseDetailScreen(
-                    courseId = 1,
+                    courseId = courseId,
                     onNavigateBack = { navController.popBackStack() },
-                    onNavigateToEditCourse = { _ ->
-                        navController.navigate(Screen.EditCourse.route)
+                    onNavigateToEditCourse = { id ->
+                        navController.navigate(Screen.EditCourse.createRoute(id))
                     }
                 )
             }
@@ -195,9 +219,13 @@ fun TaskMateNavGraph(navController: NavHostController) {
                 )
             }
 
-            composable(Screen.EditCourse.route) {
+            composable(
+                route = Screen.EditCourse.route,
+                arguments = listOf(navArgument("courseId") { type = NavType.IntType; defaultValue = 1 })
+            ) { backStackEntry ->
+                val courseId = backStackEntry.arguments?.getInt("courseId") ?: 1
                 EditCourseScreen(
-                    courseId = 1,
+                    courseId = courseId,
                     onNavigateBack = { navController.popBackStack() }
                 )
             }

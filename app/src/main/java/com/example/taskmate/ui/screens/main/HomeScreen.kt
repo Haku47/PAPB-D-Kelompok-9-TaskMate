@@ -16,17 +16,47 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import com.example.taskmate.data.DummyData
+import com.example.taskmate.data.TaskItem
+import com.example.taskmate.ui.components.AppConfirmDialog
 import com.example.taskmate.ui.components.ScheduleItemCard
 import com.example.taskmate.ui.components.TaskItemCard
 import com.example.taskmate.ui.theme.AppThemeColors
+
+import com.example.taskmate.ui.theme.strings
 
 @Composable
 fun HomeScreen(
     onNavigateToTaskDetail: (Int) -> Unit
 ) {
+    val s = strings
+    val haptic = LocalHapticFeedback.current
+    var taskToDelete by remember { mutableStateOf<TaskItem?>(null) }
+
     // Ambil 3 jadwal
-    val homeSchedules = DummyData.schedules.filter { it.day == "Tuesday" }
+    val homeSchedules = DummyData.schedules.filter { it.day == "Tuesday" }.ifEmpty { DummyData.schedules.take(3) }
+
+    taskToDelete?.let { task ->
+        AppConfirmDialog(
+            title = s.deleteTaskConfirmTitle,
+            message = s.deleteTaskConfirmMessage(task.title),
+            confirmText = s.deleteButton,
+            cancelText = s.cancelButton,
+            onConfirm = {
+                DummyData.deleteTask(task.id)
+                taskToDelete = null
+            },
+            onDismiss = {
+                taskToDelete = null
+            }
+        )
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -39,14 +69,14 @@ fun HomeScreen(
         item {
             Spacer(modifier = Modifier.height(20.dp))
             Text(
-                text = "Hello, Mad!",
+                text = s.greeting,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 color = AppThemeColors.textPrimary
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
-                text = "You've got 5 active tasks!",
+                text = s.activeTasksNotice(DummyData.tasks.count { it.status != "Finished" }),
                 fontSize = 13.sp,
                 color = AppThemeColors.textSecondary
             )
@@ -55,7 +85,7 @@ fun HomeScreen(
 
             // Header Section Tasks + Divider
             Text(
-                text = "Tasks",
+                text = s.sectionTasks,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = AppThemeColors.textPrimary
@@ -69,10 +99,18 @@ fun HomeScreen(
         }
 
         // 3 Task teratas
-        items(DummyData.tasks.take(3)) { task ->
+        items(
+            items = DummyData.tasks.take(3),
+            key = { it.id }
+        ) { task ->
             TaskItemCard(
                 task = task,
-                onClick = { onNavigateToTaskDetail(task.id) }
+                onClick = { onNavigateToTaskDetail(task.id) },
+                onLongClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    taskToDelete = task
+                },
+                modifier = Modifier.animateItem()
             )
         }
 
@@ -81,7 +119,7 @@ fun HomeScreen(
 
             // Header Section Your Schedule + Divider
             Text(
-                text = "Your Schedule",
+                text = s.sectionSchedule,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = AppThemeColors.textPrimary

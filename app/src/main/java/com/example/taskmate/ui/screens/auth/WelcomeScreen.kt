@@ -20,10 +20,14 @@ import androidx.compose.ui.unit.sp
 import com.example.taskmate.R
 import com.example.taskmate.ui.theme.AppThemeColors
 
+import com.example.taskmate.ui.theme.strings
+
 @Composable
 fun WelcomeScreen(
     onContinue: () -> Unit
 ) {
+    val s = strings
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -42,7 +46,7 @@ fun WelcomeScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "Welcome to TaskMate",
+            text = s.welcomeTitle,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = AppThemeColors.textPrimary

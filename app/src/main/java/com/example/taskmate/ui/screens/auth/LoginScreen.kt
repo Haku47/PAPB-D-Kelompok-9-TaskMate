@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
 import com.example.taskmate.ui.theme.White
+import com.example.taskmate.ui.theme.strings
 
 @Composable
 fun LoginScreen(
@@ -50,6 +51,7 @@ fun LoginScreen(
     onNavigateToSignUp: () -> Unit,
     onNavigateToForgotPassword: () -> Unit
 ) {
+    val s = strings
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
@@ -67,7 +69,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(70.dp))
 
         Text(
-            text = "Login",
+            text = s.loginTitle,
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             color = AppThemeColors.textPrimary
@@ -78,7 +80,7 @@ fun LoginScreen(
         // Username
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "Username",
+                text = s.usernameLabel,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = AppThemeColors.textPrimary
@@ -89,7 +91,7 @@ fun LoginScreen(
                 onValueChange = { username = it },
                 placeholder = {
                     Text(
-                        text = "Enter your username",
+                        text = s.enterUsernamePlaceholder,
                         color = AppThemeColors.textSecondary,
                         fontSize = 14.sp
                     )
@@ -113,7 +115,7 @@ fun LoginScreen(
         // Password dengan Show/Hide Toggle
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "Password",
+                text = s.passwordLabel,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = AppThemeColors.textPrimary
@@ -124,7 +126,7 @@ fun LoginScreen(
                 onValueChange = { password = it },
                 placeholder = {
                     Text(
-                        text = "Enter your password",
+                        text = s.enterPasswordPlaceholder,
                         color = AppThemeColors.textSecondary,
                         fontSize = 14.sp
                     )
@@ -160,7 +162,7 @@ fun LoginScreen(
         // Forgot Password
         Box(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "Forgot Password",
+                text = s.forgotPassword,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Medium,
                 color = AppThemeColors.textPrimary,
@@ -181,7 +183,7 @@ fun LoginScreen(
             colors = ButtonDefaults.buttonColors(containerColor = BlueNormal)
         ) {
             Text(
-                text = "Login",
+                text = s.loginButton,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = White
@@ -196,12 +198,12 @@ fun LoginScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Don't have an account? ",
+                text = s.dontHaveAccount,
                 fontSize = 13.sp,
                 color = AppThemeColors.textPrimary
             )
             Text(
-                text = "Sign Up",
+                text = s.signUpLink,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 color = AppThemeColors.textPrimary,

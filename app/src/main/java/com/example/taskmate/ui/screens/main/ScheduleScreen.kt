@@ -20,10 +20,13 @@ import com.example.taskmate.data.DummyData
 import com.example.taskmate.ui.components.ScheduleItemCard
 import com.example.taskmate.ui.theme.AppThemeColors
 
+import com.example.taskmate.ui.theme.strings
+
 @Composable
 fun ScheduleScreen() {
-    val mondayCourses = DummyData.schedules.filter { it.day == "Monday" }
-    val tuesdayCourses = DummyData.schedules.filter { it.day == "Tuesday" }
+    val s = strings
+    val daysOrder = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+    val groupedSchedules = DummyData.schedules.groupBy { it.day }
 
     Column(
         modifier = Modifier
@@ -34,7 +37,7 @@ fun ScheduleScreen() {
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "Class Schedule",
+            text = s.classScheduleTitle,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             color = AppThemeColors.textPrimary
@@ -47,33 +50,24 @@ fun ScheduleScreen() {
             contentPadding = PaddingValues(bottom = 120.dp),
             modifier = Modifier.fillMaxSize()
         ) {
-            item {
-                Text(
-                    text = "Monday",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = AppThemeColors.textPrimary,
-                    modifier = Modifier.padding(bottom = 2.dp)
-                )
-            }
+            daysOrder.forEach { dayName ->
+                val coursesForDay = groupedSchedules[dayName]
+                if (!coursesForDay.isNullOrEmpty()) {
+                    item {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = s.translateDay(dayName),
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = AppThemeColors.textPrimary,
+                            modifier = Modifier.padding(bottom = 2.dp)
+                        )
+                    }
 
-            items(mondayCourses) { course ->
-                ScheduleItemCard(course = course)
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Tuesday",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = AppThemeColors.textPrimary,
-                    modifier = Modifier.padding(bottom = 2.dp)
-                )
-            }
-
-            items(tuesdayCourses) { course ->
-                ScheduleItemCard(course = course)
+                    items(coursesForDay) { course ->
+                        ScheduleItemCard(course = course)
+                    }
+                }
             }
         }
     }

@@ -44,6 +44,7 @@ val SurfaceCardDark = Color(0xFF252525)
 val TextPrimaryDark = Color(0xFFF3F4F6)
 val TextSecondaryDark = Color(0xFF9CA3AF)
 val BorderColorDark = Color(0xFF374151)
+val BottomBarDark = Color(0xFF1E293B)
 
 // --- DYNAMIC THEME COLORS HELPER ---
 object AppThemeColors {
@@ -68,8 +69,14 @@ object AppThemeColors {
     val searchBarContainer: Color
         @Composable get() = if (ThemeState.isDarkMode) SurfaceCardDark else White
 
+    val bottomBarBackground: Color
+        @Composable get() = if (ThemeState.isDarkMode) BottomBarDark else BlueNormal
+
     val fabBackground: Color
-        @Composable get() = if (ThemeState.isDarkMode) SurfaceCardDark else Color(0xFFF1F5F9)
+        @Composable get() = if (ThemeState.isDarkMode) BottomBarDark else White
+
+    val fabContentColor: Color
+        @Composable get() = if (ThemeState.isDarkMode) White else TextPrimary
 
     val profileBannerBg: Color
         @Composable get() = if (ThemeState.isDarkMode) SurfaceDark else Color(0xFFE8F1FC)

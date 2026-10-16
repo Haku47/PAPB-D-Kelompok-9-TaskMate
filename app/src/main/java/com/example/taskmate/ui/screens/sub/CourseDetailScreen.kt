@@ -18,20 +18,28 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskmate.data.DummyData
+import com.example.taskmate.ui.components.AppConfirmDialog
+import com.example.taskmate.ui.theme.AppThemeColors
+import com.example.taskmate.ui.theme.strings
 
 @Composable
 fun CourseDetailScreen(
@@ -39,15 +47,34 @@ fun CourseDetailScreen(
     onNavigateBack: () -> Unit,
     onNavigateToEditCourse: (Int) -> Unit
 ) {
-    val course = DummyData.courses.find { it.id == courseId } ?: DummyData.courses.first()
+    val s = strings
+    val course = DummyData.getCourseById(courseId) ?: DummyData.courses.firstOrNull() ?: return
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    if (showDeleteDialog) {
+        AppConfirmDialog(
+            title = s.deleteCourseConfirmTitle,
+            message = s.deleteCourseConfirmMessage(course.title),
+            confirmText = s.deleteButton,
+            cancelText = s.cancelButton,
+            onConfirm = {
+                showDeleteDialog = false
+                DummyData.deleteCourse(course.id)
+                onNavigateBack()
+            },
+            onDismiss = {
+                showDeleteDialog = false
+            }
+        )
+    }
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = AppThemeColors.background
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(AppThemeColors.background)
                 .padding(innerPadding)
                 .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState())
@@ -68,7 +95,7 @@ fun CourseDetailScreen(
                             .clip(CircleShape)
                             .border(
                                 width = 1.5.dp,
-                                color = MaterialTheme.colorScheme.onBackground,
+                                color = AppThemeColors.textPrimary,
                                 shape = CircleShape
                             )
                             .clickable { onNavigateBack() }
@@ -76,7 +103,7 @@ fun CourseDetailScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                             contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onBackground,
+                            tint = AppThemeColors.textPrimary,
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(4.dp)
@@ -84,24 +111,40 @@ fun CourseDetailScreen(
                     }
 
                     Text(
-                        text = "Course Detail",
+                        text = s.courseDetailTitle,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground,
+                        color = AppThemeColors.textPrimary,
                         modifier = Modifier.padding(top = 2.dp)
                     )
                 }
 
-                IconButton(
-                    onClick = { onNavigateToEditCourse(courseId) },
-                    modifier = Modifier.size(36.dp)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Edit,
-                        contentDescription = "Edit Course",
-                        tint = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.size(22.dp)
-                    )
+                    IconButton(
+                        onClick = { showDeleteDialog = true },
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Delete,
+                            contentDescription = "Delete Course",
+                            tint = Color(0xFFE53935),
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+
+                    IconButton(
+                        onClick = { onNavigateToEditCourse(courseId) },
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Edit,
+                            contentDescription = "Edit Course",
+                            tint = AppThemeColors.textPrimary,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
                 }
             }
 
@@ -109,7 +152,7 @@ fun CourseDetailScreen(
 
             // Course Name
             CourseDetailItem(
-                label = "Course Name",
+                label = s.courseNameLabel,
                 value = course.title
             )
 
@@ -117,16 +160,17 @@ fun CourseDetailScreen(
 
             // Lecturer Name
             CourseDetailItem(
-                label = "Lecturer Name",
+                label = s.lecturerNameLabel,
                 value = course.lecturer
             )
 
             Spacer(modifier = Modifier.height(28.dp))
 
             // Schedule Information
+            val displayTime = if (course.time.contains(",")) course.time.substringAfter(",").trim() else course.time.trim()
             CourseDetailItem(
-                label = "Schedule Information",
-                value = "${course.day}, ${course.time.substringAfter(", ")}\n${course.room}"
+                label = s.scheduleInfoLabel,
+                value = "${s.translateDay(course.day)}, $displayTime\n${course.room}"
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -144,20 +188,20 @@ private fun CourseDetailItem(
             text = label,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
+            color = AppThemeColors.textPrimary
         )
         Spacer(modifier = Modifier.height(6.dp))
         Text(
             text = value,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = AppThemeColors.textSecondary,
             lineHeight = 20.sp
         )
         Spacer(modifier = Modifier.height(14.dp))
         HorizontalDivider(
             thickness = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant
+            color = AppThemeColors.border
         )
     }
 }

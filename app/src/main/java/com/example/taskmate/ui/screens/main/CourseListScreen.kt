@@ -34,20 +34,45 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
+import com.example.taskmate.data.CourseItem
 import com.example.taskmate.data.DummyData
+import com.example.taskmate.ui.components.AppConfirmDialog
 import com.example.taskmate.ui.components.CourseItemCard
 import com.example.taskmate.ui.theme.AppThemeColors
+
+import com.example.taskmate.ui.theme.strings
 
 @Composable
 fun CourseListScreen(
     onNavigateToAddCourse: () -> Unit,
     onNavigateToCourseDetail: (Int) -> Unit
 ) {
+    val s = strings
+    val haptic = LocalHapticFeedback.current
     var searchQuery by remember { mutableStateOf("") }
+    var courseToDelete by remember { mutableStateOf<CourseItem?>(null) }
 
     val filteredCourses = DummyData.courses.filter {
         it.title.contains(searchQuery, ignoreCase = true) ||
                 it.room.contains(searchQuery, ignoreCase = true)
+    }
+
+    courseToDelete?.let { course ->
+        AppConfirmDialog(
+            title = s.deleteCourseConfirmTitle,
+            message = s.deleteCourseConfirmMessage(course.title),
+            confirmText = s.deleteButton,
+            cancelText = s.cancelButton,
+            onConfirm = {
+                DummyData.deleteCourse(course.id)
+                courseToDelete = null
+            },
+            onDismiss = {
+                courseToDelete = null
+            }
+        )
     }
 
     Box(
@@ -63,7 +88,7 @@ fun CourseListScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = "Course List",
+                text = s.courseListTitle,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 color = AppThemeColors.textPrimary
@@ -76,7 +101,7 @@ fun CourseListScreen(
                 onValueChange = { searchQuery = it },
                 placeholder = {
                     Text(
-                        text = "Search course...",
+                        text = s.searchCoursePlaceholder,
                         fontSize = 13.sp,
                         color = AppThemeColors.textSecondary
                     )
@@ -109,10 +134,18 @@ fun CourseListScreen(
                 contentPadding = PaddingValues(top = 4.dp, bottom = 120.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(filteredCourses) { course ->
+                items(
+                    items = filteredCourses,
+                    key = { it.id }
+                ) { course ->
                     CourseItemCard(
                         course = course,
-                        onClick = { onNavigateToCourseDetail(course.id) }
+                        onClick = { onNavigateToCourseDetail(course.id) },
+                        onLongClick = {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            courseToDelete = course
+                        },
+                        modifier = Modifier.animateItem()
                     )
                 }
             }
@@ -122,7 +155,7 @@ fun CourseListScreen(
             onClick = onNavigateToAddCourse,
             shape = CircleShape,
             containerColor = AppThemeColors.fabBackground,
-            contentColor = AppThemeColors.textPrimary,
+            contentColor = AppThemeColors.fabContentColor,
             elevation = FloatingActionButtonDefaults.elevation(
                 defaultElevation = 6.dp,
                 pressedElevation = 2.dp
@@ -134,7 +167,7 @@ fun CourseListScreen(
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
-                contentDescription = "Add Course",
+                contentDescription = s.addCourseFab,
                 modifier = Modifier.size(26.dp)
             )
         }

@@ -1,12 +1,17 @@
 package com.example.taskmate.data
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+
 data class CourseItem(
     val id: Int,
     val title: String,
     val day: String,
     val time: String,
     val room: String,
-    val lecturer: String = "Dr. John Doe, M.Cs."
+    val lecturer: String = "Dr. Eng. Herman Tolle, S.T., M.T."
 )
 
 data class TaskItem(
@@ -20,10 +25,12 @@ data class TaskItem(
 )
 
 object DummyData {
+    var finishedTasksCount by mutableStateOf(20)
+
     // -------------------------------------------------------------------------
-    // 1. DATA KHUSUS TAB "COURSE LIST" (6 item PAPB D sesuai Figma)
+    // 1. Course List
     // -------------------------------------------------------------------------
-    val courses = listOf(
+    val courses = mutableStateListOf(
         CourseItem(
             id = 1,
             title = "PAPB D",
@@ -75,10 +82,9 @@ object DummyData {
     )
 
     // -------------------------------------------------------------------------
-    // 2. DATA KHUSUS "CLASS SCHEDULE" & "YOUR SCHEDULE" (Monday & Tuesday)
+    // 2. Schedule List
     // -------------------------------------------------------------------------
-    val schedules = listOf(
-        // Monday (2 Kelas)
+    val schedules = mutableStateListOf(
         CourseItem(
             id = 101,
             title = "JST D",
@@ -95,8 +101,6 @@ object DummyData {
             room = "Room F4.6",
             lecturer = "Ir. Tri Astoto, M.Kom."
         ),
-
-        // Tuesday (3 Kelas)
         CourseItem(
             id = 103,
             title = "JST D",
@@ -118,15 +122,15 @@ object DummyData {
             title = "Komputer Grafis D",
             day = "Tuesday",
             time = "03:20 PM - 05:00 PM",
-            room = "Room F3.11",
+            room = "Room F3.1",
             lecturer = "Sabriansyah Rizqika, S.T., M.Eng."
         )
     )
 
     // -------------------------------------------------------------------------
-    // 3. DATA KHUSUS TAB "TASKS LIST" & "HOME SCREEN TASKS" (6 item Tugas)
+    // 3. Task List
     // -------------------------------------------------------------------------
-    val tasks = listOf(
+    val tasks = mutableStateListOf(
         TaskItem(
             id = 1,
             title = "Assignment 1: abcd",
@@ -134,7 +138,7 @@ object DummyData {
             daysLeft = "7 Days left",
             dueDate = "Due Friday, Oct 16\n11:59 PM",
             status = "In Progress",
-            description = "Kerjakan latihan soal bab 1-3 pada modul praktikum."
+            description = "Complete the exercise assigned in class and upload the report before the deadline."
         ),
         TaskItem(
             id = 2,
@@ -143,7 +147,7 @@ object DummyData {
             daysLeft = "7 Days left",
             dueDate = "Due Friday, Oct 16\n11:59 PM",
             status = "In Progress",
-            description = "Implementasikan algoritma klasifikasi menggunakan dataset A."
+            description = "Complete the exercise assigned in class and upload the report before the deadline."
         ),
         TaskItem(
             id = 3,
@@ -152,7 +156,7 @@ object DummyData {
             daysLeft = "7 Days left",
             dueDate = "Due Friday, Oct 16\n11:59 PM",
             status = "In Progress",
-            description = "Buat rangkuman paper jurnal terkait arsitektur jaringan."
+            description = "Complete the exercise assigned in class and upload the report before the deadline."
         ),
         TaskItem(
             id = 4,
@@ -161,7 +165,7 @@ object DummyData {
             daysLeft = "7 Days left",
             dueDate = "Due Friday, Oct 16\n11:59 PM",
             status = "In Progress",
-            description = "Selesaikan laporan bab perancangan antarmuka pengguna."
+            description = "Complete the exercise assigned in class and upload the report before the deadline."
         ),
         TaskItem(
             id = 5,
@@ -170,16 +174,73 @@ object DummyData {
             daysLeft = "7 Days left",
             dueDate = "Due Friday, Oct 16\n11:59 PM",
             status = "In Progress",
-            description = "Studi kasus analisis performa server lokal."
-        ),
-        TaskItem(
-            id = 6,
-            title = "Assignment 1: abcd",
-            course = "Course A",
-            daysLeft = "7 Days left",
-            dueDate = "Due Friday, Oct 16\n11:59 PM",
-            status = "In Progress",
-            description = "Presentasi progres proyek akhir aplikasi mobile."
+            description = "Complete the exercise assigned in class and upload the report before the deadline."
         )
     )
+
+    fun getCourseById(id: Int): CourseItem? {
+        return courses.find { it.id == id } ?: schedules.find { it.id == id }
+    }
+
+    fun getTaskById(id: Int): TaskItem? {
+        return tasks.find { it.id == id }
+    }
+
+    fun addCourse(course: CourseItem) {
+        courses.add(course)
+        if (course.day.isNotBlank()) {
+            schedules.add(course)
+        }
+    }
+
+    fun updateCourse(course: CourseItem) {
+        val courseIndex = courses.indexOfFirst { it.id == course.id }
+        if (courseIndex != -1) {
+            courses[courseIndex] = course
+        }
+        val scheduleIndex = schedules.indexOfFirst { it.id == course.id }
+        if (scheduleIndex != -1) {
+            schedules[scheduleIndex] = course
+        }
+    }
+
+    fun addTask(task: TaskItem) {
+        tasks.add(0, task)
+    }
+
+    fun updateTask(task: TaskItem) {
+        val index = tasks.indexOfFirst { it.id == task.id }
+        if (index != -1) {
+            tasks[index] = task
+        }
+    }
+
+    fun markTaskFinished(id: Int) {
+        val index = tasks.indexOfFirst { it.id == id }
+        if (index != -1) {
+            val task = tasks[index]
+            tasks[index] = task.copy(status = "Finished", daysLeft = "Completed")
+            finishedTasksCount++
+        }
+    }
+
+    fun deleteCourse(id: Int): Boolean {
+        val courseRemoved = courses.removeAll { it.id == id }
+        val scheduleRemoved = schedules.removeAll { it.id == id }
+        return courseRemoved || scheduleRemoved
+    }
+
+    fun deleteTask(id: Int): Boolean {
+        return tasks.removeAll { it.id == id }
+    }
+
+    fun generateCourseId(): Int {
+        val maxCoursesId = courses.maxOfOrNull { it.id } ?: 0
+        val maxScheduleId = schedules.maxOfOrNull { it.id } ?: 0
+        return maxOf(maxCoursesId, maxScheduleId) + 1
+    }
+
+    fun generateTaskId(): Int {
+        return (tasks.maxOfOrNull { it.id } ?: 0) + 1
+    }
 }
