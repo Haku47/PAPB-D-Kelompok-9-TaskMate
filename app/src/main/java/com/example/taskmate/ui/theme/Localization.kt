@@ -86,7 +86,12 @@ interface AppStrings {
     val endTimeLabel: String
     val roomLabel: String
     val locationLabel: String
+    val selectTimeTitle: String
+    val timeFormat12Hour: String
+    val timeFormat24Hour: String
     val anotherSessionButton: String
+    val sessionHeader: (Int) -> String
+    val removeSession: String
 
     // Dialogs
     val dialogChangesSaved: String
@@ -225,7 +230,12 @@ object EnglishStrings : AppStrings {
     override val endTimeLabel = "End Time"
     override val roomLabel = "Room"
     override val locationLabel = "Location"
+    override val selectTimeTitle = "Select Time"
+    override val timeFormat12Hour = "12-Hour (AM/PM)"
+    override val timeFormat24Hour = "24-Hour"
     override val anotherSessionButton = "+ Another Session"
+    override val sessionHeader: (Int) -> String = { index -> "Session $index" }
+    override val removeSession = "Remove Session"
 
     override val dialogChangesSaved = "Changes saved successfully!"
     override val dialogCourseAdded = "Course added successfully!"
@@ -371,7 +381,12 @@ object IndonesianStrings : AppStrings {
     override val endTimeLabel = "Waktu Selesai"
     override val roomLabel = "Ruangan"
     override val locationLabel = "Lokasi"
+    override val selectTimeTitle = "Pilih Jam"
+    override val timeFormat12Hour = "12 Jam (AM/PM)"
+    override val timeFormat24Hour = "24 Jam"
     override val anotherSessionButton = "+ Sesi Lainnya"
+    override val sessionHeader: (Int) -> String = { index -> "Sesi $index" }
+    override val removeSession = "Hapus Sesi"
 
     override val dialogChangesSaved = "Perubahan berhasil disimpan!"
     override val dialogCourseAdded = "Mata kuliah berhasil ditambahkan!"

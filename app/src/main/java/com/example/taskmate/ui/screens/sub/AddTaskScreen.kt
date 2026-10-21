@@ -7,7 +7,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -55,6 +59,7 @@ fun AddTaskScreen(
     onTaskAdded: () -> Unit
 ) {
     val s = strings
+    val focusManager = LocalFocusManager.current
     val courseOptions = remember {
         val dynamicCourses = (listOf("Course A") + DummyData.courses.map { it.title } + DummyData.schedules.map { it.title }).distinct()
         if (dynamicCourses.isNotEmpty()) dynamicCourses else listOf("Course A", "PAPB D", "JST D", "Keamanan Jaringan A")
@@ -80,6 +85,9 @@ fun AddTaskScreen(
     }
 
     Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding(),
         containerColor = AppThemeColors.background,
         bottomBar = {
             Box(
@@ -124,6 +132,11 @@ fun AddTaskScreen(
                 .fillMaxSize()
                 .background(AppThemeColors.background)
                 .padding(innerPadding)
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = {
+                        focusManager.clearFocus()
+                    })
+                }
                 .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState())
         ) {

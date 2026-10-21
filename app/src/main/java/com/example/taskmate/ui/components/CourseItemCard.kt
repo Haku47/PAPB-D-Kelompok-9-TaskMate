@@ -91,17 +91,32 @@ fun CourseItemCard(
                     color = AppThemeColors.textPrimary
                 )
                 Spacer(modifier = Modifier.height(3.dp))
-                Text(
-                    text = "${s.translateDay(course.day)}, $timeOnly",
-                    fontSize = 12.sp,
-                    color = AppThemeColors.textSecondary
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = course.room,
-                    fontSize = 12.sp,
-                    color = AppThemeColors.textSecondary
-                )
+                if (course.allSessions.size > 1) {
+                    course.allSessions.forEachIndexed { index, session ->
+                        val sessionTime = if (session.time.contains(",")) session.time.substringAfter(",").trim() else session.time.trim()
+                        val roomPart = if (session.room.isNotBlank()) " (${session.room})" else ""
+                        Text(
+                            text = "${s.translateDay(session.day)}, $sessionTime$roomPart",
+                            fontSize = 12.sp,
+                            color = AppThemeColors.textSecondary
+                        )
+                        if (index < course.allSessions.size - 1) {
+                            Spacer(modifier = Modifier.height(2.dp))
+                        }
+                    }
+                } else {
+                    Text(
+                        text = "${s.translateDay(course.day)}, $timeOnly",
+                        fontSize = 12.sp,
+                        color = AppThemeColors.textSecondary
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = course.room,
+                        fontSize = 12.sp,
+                        color = AppThemeColors.textSecondary
+                    )
+                }
             }
         }
     }

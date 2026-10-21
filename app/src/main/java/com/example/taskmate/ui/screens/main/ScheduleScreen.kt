@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskmate.data.DummyData
+import com.example.taskmate.ui.components.CourseTimeHelper
 import com.example.taskmate.ui.components.ScheduleItemCard
 import com.example.taskmate.ui.theme.AppThemeColors
 
@@ -25,8 +26,8 @@ import com.example.taskmate.ui.theme.strings
 @Composable
 fun ScheduleScreen() {
     val s = strings
-    val daysOrder = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
-    val groupedSchedules = DummyData.schedules.groupBy { it.day }
+    val daysOrder = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
+    val groupedSchedules = DummyData.schedules.groupBy { CourseTimeHelper.normalizeDay(it.day) }
 
     Column(
         modifier = Modifier

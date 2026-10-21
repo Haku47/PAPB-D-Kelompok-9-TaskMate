@@ -56,7 +56,11 @@ fun CourseListScreen(
 
     val filteredCourses = DummyData.courses.filter {
         it.title.contains(searchQuery, ignoreCase = true) ||
-                it.room.contains(searchQuery, ignoreCase = true)
+                it.room.contains(searchQuery, ignoreCase = true) ||
+                it.allSessions.any { session ->
+                    session.day.contains(searchQuery, ignoreCase = true) ||
+                    session.room.contains(searchQuery, ignoreCase = true)
+                }
     }
 
     courseToDelete?.let { course ->

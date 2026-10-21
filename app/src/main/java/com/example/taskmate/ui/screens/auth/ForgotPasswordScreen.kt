@@ -7,7 +7,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -49,10 +53,14 @@ fun ForgotPasswordScreen(
     onNavigateBack: () -> Unit
 ) {
     val s = strings
+    val focusManager = LocalFocusManager.current
     var email by remember { mutableStateOf("") }
     val fieldShape = RoundedCornerShape(10.dp)
 
     Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding(),
         containerColor = AppThemeColors.background,
         bottomBar = {
             Box(
@@ -84,6 +92,11 @@ fun ForgotPasswordScreen(
                 .fillMaxSize()
                 .background(AppThemeColors.background)
                 .padding(innerPadding)
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = {
+                        focusManager.clearFocus()
+                    })
+                }
                 .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState())
         ) {

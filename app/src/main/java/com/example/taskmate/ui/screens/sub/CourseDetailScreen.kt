@@ -167,10 +167,21 @@ fun CourseDetailScreen(
             Spacer(modifier = Modifier.height(28.dp))
 
             // Schedule Information
-            val displayTime = if (course.time.contains(",")) course.time.substringAfter(",").trim() else course.time.trim()
+            val sessionsToDisplay = course.allSessions
+            val scheduleDisplayValue = if (sessionsToDisplay.size > 1) {
+                sessionsToDisplay.mapIndexed { index, session ->
+                    val displayTime = if (session.time.contains(",")) session.time.substringAfter(",").trim() else session.time.trim()
+                    val roomText = if (session.room.isNotBlank()) "\n${session.room}" else ""
+                    "${s.sessionHeader(index + 1)}:\n${s.translateDay(session.day)}, $displayTime$roomText"
+                }.joinToString("\n\n")
+            } else {
+                val displayTime = if (course.time.contains(",")) course.time.substringAfter(",").trim() else course.time.trim()
+                "${s.translateDay(course.day)}, $displayTime\n${course.room}"
+            }
+
             CourseDetailItem(
                 label = s.scheduleInfoLabel,
-                value = "${s.translateDay(course.day)}, $displayTime\n${course.room}"
+                value = scheduleDisplayValue
             )
 
             Spacer(modifier = Modifier.height(24.dp))

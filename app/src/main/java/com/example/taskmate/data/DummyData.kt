@@ -5,14 +5,58 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
+import com.example.taskmate.ui.components.CourseTimeHelper
+
+data class CourseSession(
+    val day: String,
+    val time: String,
+    val room: String = ""
+)
+
+data class SessionInputState(
+    val day: String = "",
+    val startTime: String = "09:35 AM",
+    val endTime: String = "11:15 AM",
+    val room: String = ""
+)
+
+fun CourseSession.toInputState(): SessionInputState {
+    val times = CourseTimeHelper.parseTimeRange(time)
+    return SessionInputState(
+        day = day,
+        startTime = times.first.ifBlank { "09:35 AM" },
+        endTime = times.second.ifBlank { "11:15 AM" },
+        room = room
+    )
+}
+
+fun SessionInputState.toCourseSession(): CourseSession {
+    val range = CourseTimeHelper.buildTimeRange(startTime, endTime)
+    return CourseSession(
+        day = CourseTimeHelper.normalizeDay(day),
+        time = range,
+        room = room
+    )
+}
+
 data class CourseItem(
     val id: Int,
     val title: String,
     val day: String,
     val time: String,
     val room: String,
-    val lecturer: String = "Dr. Eng. Herman Tolle, S.T., M.T."
-)
+    val lecturer: String = "Dr. Eng. Herman Tolle, S.T., M.T.",
+    val sessions: List<CourseSession> = emptyList()
+) {
+    val allSessions: List<CourseSession>
+        get() = if (sessions.isNotEmpty()) {
+            sessions
+        } else if (day.isNotBlank() || time.isNotBlank()) {
+            listOf(CourseSession(day = day, time = time, room = room))
+        } else {
+            emptyList()
+        }
+}
 
 data class TaskItem(
     val id: Int,
@@ -37,7 +81,11 @@ object DummyData {
             day = "Tuesday",
             time = "09:35 AM - 11:15 AM",
             room = "Room RV1.3",
-            lecturer = "Dr. Eng. Herman Tolle, S.T., M.T."
+            lecturer = "Dr. Eng. Herman Tolle, S.T., M.T.",
+            sessions = listOf(
+                CourseSession(day = "Tuesday", time = "09:35 AM - 11:15 AM", room = "Room RV1.3"),
+                CourseSession(day = "Friday", time = "12:30 PM - 02:10 PM", room = "Room RV1.3")
+            )
         ),
         CourseItem(
             id = 2,
@@ -124,6 +172,30 @@ object DummyData {
             time = "03:20 PM - 05:00 PM",
             room = "Room F3.1",
             lecturer = "Sabriansyah Rizqika, S.T., M.Eng."
+        ),
+        CourseItem(
+            id = 107,
+            title = "KI",
+            day = "Wednesday",
+            time = "10:30 AM - 12:10 PM",
+            room = "Room F4.2",
+            lecturer = "Ir. Tri Astoto, M.Kom."
+        ),
+        CourseItem(
+            id = 108,
+            title = "Jaringan Nirkabel",
+            day = "Thursday",
+            time = "09:35 AM - 12:10 PM",
+            room = "Room G1.3",
+            lecturer = "Dr. Eng. Herman Tolle, S.T., M.T."
+        ),
+        CourseItem(
+            id = 106,
+            title = "PAPB D",
+            day = "Friday",
+            time = "12:30 PM - 02:10 PM",
+            room = "Room RV1.3",
+            lecturer = "Dr. Eng. Herman Tolle, S.T., M.T."
         )
     )
 
@@ -188,8 +260,22 @@ object DummyData {
 
     fun addCourse(course: CourseItem) {
         courses.add(course)
-        if (course.day.isNotBlank()) {
-            schedules.add(course)
+        val sessionList = course.allSessions
+        for (session in sessionList) {
+            val normDay = CourseTimeHelper.normalizeDay(session.day)
+            if (normDay.isNotBlank()) {
+                schedules.add(
+                    CourseItem(
+                        id = course.id,
+                        title = course.title,
+                        day = normDay,
+                        time = session.time,
+                        room = session.room,
+                        lecturer = course.lecturer,
+                        sessions = course.sessions
+                    )
+                )
+            }
         }
     }
 
@@ -198,9 +284,23 @@ object DummyData {
         if (courseIndex != -1) {
             courses[courseIndex] = course
         }
-        val scheduleIndex = schedules.indexOfFirst { it.id == course.id }
-        if (scheduleIndex != -1) {
-            schedules[scheduleIndex] = course
+        schedules.removeAll { it.id == course.id }
+        val sessionList = course.allSessions
+        for (session in sessionList) {
+            val normDay = CourseTimeHelper.normalizeDay(session.day)
+            if (normDay.isNotBlank()) {
+                schedules.add(
+                    CourseItem(
+                        id = course.id,
+                        title = course.title,
+                        day = normDay,
+                        time = session.time,
+                        room = session.room,
+                        lecturer = course.lecturer,
+                        sessions = course.sessions
+                    )
+                )
+            }
         }
     }
 
