@@ -87,6 +87,9 @@ interface AppStrings {
     val roomLabel: String
     val locationLabel: String
     val selectTimeTitle: String
+    val timePickerSubtitle: String
+    val switchToKeyboardMode: String
+    val switchToDialMode: String
     val timeFormat12Hour: String
     val timeFormat24Hour: String
     val anotherSessionButton: String
@@ -231,6 +234,9 @@ object EnglishStrings : AppStrings {
     override val roomLabel = "Room"
     override val locationLabel = "Location"
     override val selectTimeTitle = "Select Time"
+    override val timePickerSubtitle = "(edit course/schedule)"
+    override val switchToKeyboardMode = "Switch to keyboard input"
+    override val switchToDialMode = "Switch to clock dial"
     override val timeFormat12Hour = "12-Hour (AM/PM)"
     override val timeFormat24Hour = "24-Hour"
     override val anotherSessionButton = "+ Another Session"
@@ -382,6 +388,9 @@ object IndonesianStrings : AppStrings {
     override val roomLabel = "Ruangan"
     override val locationLabel = "Lokasi"
     override val selectTimeTitle = "Pilih Jam"
+    override val timePickerSubtitle = "(edit kelas/jadwal)"
+    override val switchToKeyboardMode = "Beralih ke ketik manual"
+    override val switchToDialMode = "Kembali ke mode jarum"
     override val timeFormat12Hour = "12 Jam (AM/PM)"
     override val timeFormat24Hour = "24 Jam"
     override val anotherSessionButton = "+ Sesi Lainnya"

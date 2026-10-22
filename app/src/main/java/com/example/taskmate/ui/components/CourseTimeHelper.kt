@@ -12,16 +12,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccessTime
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material.icons.outlined.Keyboard
+import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.rememberTimePickerState
@@ -34,9 +38,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
 import com.example.taskmate.ui.theme.White
@@ -172,8 +179,13 @@ object CourseTimeHelper {
 }
 
 /**
- * Dialog Jam Interaktif (Clock / Time Picker) Material 3.
- * Menampilkan dial jarum jam analog interaktif dan pemilih AM/PM atau 24 jam.
+ * Dialog Jam Interaktif Sesuai Saran Umar:
+ * Sisi A: Mode Dial (Jarum Jam analog interaktif)
+ * Sisi B: Mode Keyboard (Ketik Manual jam & menit dengan mudah)
+ * Fitur:
+ * - Segmented toggle 12-Hour (AM/PM) vs 24-Hour
+ * - Tombol beralih di pojok kiri bawah (Ikon Keyboard / Ikon Jam)
+ * - Tombol Cancel & OK
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -181,13 +193,17 @@ fun AppTimePickerDialog(
     title: String,
     initialTime: String,
     onTimeSelected: (String) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    subtitle: String? = null
 ) {
     val s = strings
     val initialMode = remember(initialTime) { CourseTimeHelper.detectMode(initialTime) }
     var is24Hour by remember(initialTime) {
         mutableStateOf(initialMode == TimeFormatMode.TWENTY_FOUR_HOUR && initialTime.isNotBlank())
     }
+    // false = Mode Dial (Jarum Jam), true = Mode Keyboard (Ketik Manual)
+    var isKeyboardMode by remember { mutableStateOf(false) }
+
     val (initHour, initMinute) = remember(initialTime) {
         CourseTimeHelper.parseHourMinute(initialTime)
     }
@@ -206,98 +222,213 @@ fun AppTimePickerDialog(
     selectedHour = timePickerState.hour
     selectedMinute = timePickerState.minute
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    val formatted = CourseTimeHelper.formatTime(
-                        hour = timePickerState.hour,
-                        minute = timePickerState.minute,
-                        is24Hour = is24Hour
-                    )
-                    onTimeSelected(formatted)
-                    onDismiss()
-                }
-            ) {
-                Text(
-                    text = s.dialogOk,
-                    fontWeight = FontWeight.Bold,
-                    color = BlueNormal,
-                    fontSize = 15.sp
-                )
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(
-                    text = s.cancelButton,
-                    fontWeight = FontWeight.Medium,
-                    color = AppThemeColors.textSecondary,
-                    fontSize = 15.sp
-                )
-            }
-        },
-        title = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = title,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = AppThemeColors.textPrimary
-                )
+    val timePickerColors = TimePickerDefaults.colors(
+        clockDialColor = AppThemeColors.searchBarContainer,
+        selectorColor = BlueNormal,
+        containerColor = AppThemeColors.cardBackground,
+        periodSelectorBorderColor = BlueNormal,
+        periodSelectorSelectedContainerColor = BlueNormal,
+        periodSelectorUnselectedContainerColor = AppThemeColors.searchBarContainer,
+        periodSelectorSelectedContentColor = White,
+        periodSelectorUnselectedContentColor = AppThemeColors.textPrimary,
+        timeSelectorSelectedContainerColor = BlueNormal.copy(alpha = 0.15f),
+        timeSelectorUnselectedContainerColor = AppThemeColors.searchBarContainer,
+        timeSelectorSelectedContentColor = BlueNormal,
+        timeSelectorUnselectedContentColor = AppThemeColors.textPrimary
+    )
 
-                // Tombol Switch Mode: 12 Jam (AM/PM) vs 24 Jam
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(AppThemeColors.searchBarContainer)
-                        .border(1.dp, AppThemeColors.border, RoundedCornerShape(8.dp))
-                        .clickable { is24Hour = !is24Hour }
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Text(
-                        text = if (is24Hour) s.timeFormat24Hour else s.timeFormat12Hour,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = BlueNormal
-                    )
-                }
-            }
-        },
-        text = {
-            Box(
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+                .clip(RoundedCornerShape(24.dp))
+                .background(AppThemeColors.cardBackground)
+                .border(1.dp, AppThemeColors.border, RoundedCornerShape(24.dp))
+                .padding(horizontal = 20.dp, vertical = 22.dp)
+        ) {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp),
-                contentAlignment = Alignment.Center
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TimePicker(
-                    state = timePickerState,
-                    colors = TimePickerDefaults.colors(
-                        clockDialColor = AppThemeColors.searchBarContainer,
-                        selectorColor = BlueNormal,
-                        containerColor = AppThemeColors.cardBackground,
-                        periodSelectorBorderColor = BlueNormal,
-                        periodSelectorSelectedContainerColor = BlueNormal,
-                        periodSelectorUnselectedContainerColor = AppThemeColors.searchBarContainer,
-                        periodSelectorSelectedContentColor = White,
-                        periodSelectorUnselectedContentColor = AppThemeColors.textPrimary,
-                        timeSelectorSelectedContainerColor = BlueNormal.copy(alpha = 0.15f),
-                        timeSelectorUnselectedContainerColor = AppThemeColors.searchBarContainer,
-                        timeSelectorSelectedContentColor = BlueNormal,
-                        timeSelectorUnselectedContentColor = AppThemeColors.textPrimary
-                    )
-                )
+                // Header Bar: Title & Subtitle di Kiri, Segmented Toggle 12h/24h di Kanan
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f, fill = false)) {
+                        Text(
+                            text = title,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = AppThemeColors.textPrimary
+                        )
+                        val subText = subtitle ?: s.timePickerSubtitle
+                        if (subText.isNotBlank()) {
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = subText,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = AppThemeColors.textSecondary
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    // Segmented Control: [ 12-Hour (AM/PM) | 24-Hour ]
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(AppThemeColors.searchBarContainer)
+                            .border(1.dp, AppThemeColors.border, RoundedCornerShape(20.dp))
+                            .padding(2.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // 12-Hour Segment
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(
+                                    if (!is24Hour) BlueNormal.copy(alpha = 0.2f) else Color.Transparent
+                                )
+                                .clickable { is24Hour = false }
+                                .padding(horizontal = 8.dp, vertical = 4.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = s.timeFormat12Hour,
+                                fontSize = 11.sp,
+                                fontWeight = if (!is24Hour) FontWeight.Bold else FontWeight.Medium,
+                                color = if (!is24Hour) BlueNormal else AppThemeColors.textSecondary
+                            )
+                        }
+
+                        // 24-Hour Segment
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(
+                                    if (is24Hour) BlueNormal.copy(alpha = 0.2f) else Color.Transparent
+                                )
+                                .clickable { is24Hour = true }
+                                .padding(horizontal = 8.dp, vertical = 4.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = s.timeFormat24Hour,
+                                fontSize = 11.sp,
+                                fontWeight = if (is24Hour) FontWeight.Bold else FontWeight.Medium,
+                                color = if (is24Hour) BlueNormal else AppThemeColors.textSecondary
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Konten Jam: Mode A (TimePicker Dial) atau Mode B (TimeInput Manual)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = if (isKeyboardMode) 28.dp else 4.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (!isKeyboardMode) {
+                        TimePicker(
+                            state = timePickerState,
+                            colors = timePickerColors
+                        )
+                    } else {
+                        TimeInput(
+                            state = timePickerState,
+                            colors = timePickerColors
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Bar Bawah: Tombol Ganti Mode (Kiri) & Tombol Cancel/OK (Kanan)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Tombol Switch Mode: Ikon Keyboard (ke ketik manual) atau Ikon Jam (kembali ke dial)
+                    Box(
+                        modifier = Modifier
+                            .size(42.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(BlueNormal)
+                            .clickable { isKeyboardMode = !isKeyboardMode },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = if (!isKeyboardMode) Icons.Outlined.Keyboard else Icons.Outlined.Schedule,
+                            contentDescription = if (!isKeyboardMode) s.switchToKeyboardMode else s.switchToDialMode,
+                            tint = White,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+
+                    // Tombol Aksi: Cancel & OK
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(AppThemeColors.searchBarContainer)
+                                .border(1.dp, AppThemeColors.border, RoundedCornerShape(10.dp))
+                                .clickable { onDismiss() }
+                                .padding(horizontal = 18.dp, vertical = 10.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = s.cancelButton,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = AppThemeColors.textPrimary
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(BlueNormal)
+                                .clickable {
+                                    val formatted = CourseTimeHelper.formatTime(
+                                        hour = timePickerState.hour,
+                                        minute = timePickerState.minute,
+                                        is24Hour = is24Hour
+                                    )
+                                    onTimeSelected(formatted)
+                                    onDismiss()
+                                }
+                                .padding(horizontal = 22.dp, vertical = 10.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = s.dialogOk,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = White
+                            )
+                        }
+                    }
+                }
             }
-        },
-        containerColor = AppThemeColors.cardBackground,
-        shape = RoundedCornerShape(20.dp)
-    )
+        }
+    }
 }
 
 /**
@@ -309,7 +440,8 @@ fun CourseTimeInputField(
     label: String,
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    subtitle: String? = null
 ) {
     val fieldShape = RoundedCornerShape(10.dp)
     var showTimePicker by remember { mutableStateOf(false) }
@@ -317,6 +449,7 @@ fun CourseTimeInputField(
     if (showTimePicker) {
         AppTimePickerDialog(
             title = label,
+            subtitle = subtitle,
             initialTime = value,
             onTimeSelected = { newTime ->
                 onValueChange(newTime)
