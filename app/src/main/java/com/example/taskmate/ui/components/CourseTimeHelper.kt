@@ -193,8 +193,7 @@ fun AppTimePickerDialog(
     title: String,
     initialTime: String,
     onTimeSelected: (String) -> Unit,
-    onDismiss: () -> Unit,
-    subtitle: String? = null
+    onDismiss: () -> Unit
 ) {
     val s = strings
     val initialMode = remember(initialTime) { CourseTimeHelper.detectMode(initialTime) }
@@ -256,30 +255,19 @@ fun AppTimePickerDialog(
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Header Bar: Title & Subtitle di Kiri, Segmented Toggle 12h/24h di Kanan
+                // Header Bar: Title di Kiri, Segmented Toggle 12h/24h di Kanan
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(modifier = Modifier.weight(1f, fill = false)) {
-                        Text(
-                            text = title,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = AppThemeColors.textPrimary
-                        )
-                        val subText = subtitle ?: s.timePickerSubtitle
-                        if (subText.isNotBlank()) {
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(
-                                text = subText,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = AppThemeColors.textSecondary
-                            )
-                        }
-                    }
+                    Text(
+                        text = title,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = AppThemeColors.textPrimary,
+                        modifier = Modifier.weight(1f, fill = false)
+                    )
 
                     Spacer(modifier = Modifier.width(8.dp))
 
@@ -440,8 +428,7 @@ fun CourseTimeInputField(
     label: String,
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    subtitle: String? = null
+    modifier: Modifier = Modifier
 ) {
     val fieldShape = RoundedCornerShape(10.dp)
     var showTimePicker by remember { mutableStateOf(false) }
@@ -449,7 +436,6 @@ fun CourseTimeInputField(
     if (showTimePicker) {
         AppTimePickerDialog(
             title = label,
-            subtitle = subtitle,
             initialTime = value,
             onTimeSelected = { newTime ->
                 onValueChange(newTime)
