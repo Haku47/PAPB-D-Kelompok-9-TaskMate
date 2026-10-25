@@ -217,18 +217,6 @@ fun SignUpScreen(
                     }
                 }
             }
-
-            // Preview olahan gabungan dua input (Front Name + Back Name -> Full Name)
-            if (viewModel.fullName.isNotBlank()) {
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = s.combinedFullNamePreview(viewModel.fullName),
-                    color = BlueNormal,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(start = 2.dp)
-                )
-            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
