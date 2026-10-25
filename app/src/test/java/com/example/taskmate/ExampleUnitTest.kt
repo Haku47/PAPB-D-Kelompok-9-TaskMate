@@ -1,14 +1,7 @@
 package com.example.taskmate
 
 import org.junit.Test
-
 import org.junit.Assert.*
-
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
 import com.example.taskmate.ui.theme.FontSizeMode
 import com.example.taskmate.ui.theme.ThemeState
 import androidx.compose.ui.unit.Density
@@ -18,6 +11,7 @@ class ExampleUnitTest {
     @org.junit.Before
     fun setUp() {
         com.example.taskmate.data.DummyData.resetToInitialDefaults()
+        com.example.taskmate.data.UserManager.resetToInitialDefaults()
     }
 
     @Test
@@ -410,5 +404,191 @@ class ExampleUnitTest {
         assertNotNull(updated)
         assertEquals("Updated Assignment 1", updated!!.title)
         assertEquals("Due Monday, Nov 2\n08:00 PM", updated.dueDate)
+    }
+
+    @Test
+    fun userManager_defaultAccountsExistAndLoginWorks() {
+        val manager = com.example.taskmate.data.UserManager
+        // Verify default accounts
+        assertTrue(manager.users.any { it.username == "madnessesroman" })
+        assertTrue(manager.users.any { it.username == "admin" })
+
+        // Login with username
+        val defaultPass = manager.defaultUsers.first { it.username == "madnessesroman" }.password
+        val loginUsernameSuccess = manager.login("madnessesroman", defaultPass)
+        assertTrue(loginUsernameSuccess)
+        assertNotNull(manager.currentUser)
+        assertEquals("Madnesses Roman", manager.currentUser!!.fullName)
+
+        // Login with email
+        val loginEmailSuccess = manager.login("madnessesroman@abcde.xyz", defaultPass)
+        assertTrue(loginEmailSuccess)
+
+        // Login with wrong password fails
+        val wrongPass = manager.login("madnessesroman", "wrongPass")
+        assertFalse(wrongPass)
+
+        // Login with unknown user fails
+        val unknownUser = manager.login("unknown_user_999", "password123")
+        assertFalse(unknownUser)
+    }
+
+    @Test
+    fun userManager_registerNewAccount_successAndPersists() {
+        val manager = com.example.taskmate.data.UserManager
+        val registered = manager.register(
+            username = "new_student",
+            email = "student@college.edu",
+            password = "securePassword123",
+            fullName = "New Student"
+        )
+        assertTrue(registered)
+        assertEquals("new_student", manager.currentUser?.username)
+        assertEquals("student@college.edu", manager.currentUser?.email)
+
+        // Can login with the newly created account
+        manager.logout()
+        assertNull(manager.currentUser)
+
+        val loginNewUser = manager.login("new_student", "securePassword123")
+        assertTrue(loginNewUser)
+        assertEquals("New Student", manager.currentUser?.fullName)
+    }
+
+    @Test
+    fun userManager_registerDuplicateFails() {
+        val manager = com.example.taskmate.data.UserManager
+        // Duplicate username
+        val dupUser = manager.register("madnessesroman", "different@email.com", "pass123")
+        assertFalse(dupUser)
+
+        // Duplicate email
+        val dupEmail = manager.register("unique_user", "madnessesroman@abcde.xyz", "pass123")
+        assertFalse(dupEmail)
+    }
+
+    @Test
+    fun loginViewModel_validationsAndSuccess() {
+        val vm = com.example.taskmate.ui.viewmodel.LoginViewModel()
+        var loggedIn = false
+
+        // Empty validation
+        val emptyResult = vm.login(
+            errEmailRequired = "Email required",
+            errInvalidEmail = "Invalid email",
+            errPasswordRequired = "Password required",
+            errInvalidCredentials = "Wrong credentials",
+            onSuccess = { loggedIn = true }
+        )
+        assertFalse(emptyResult)
+        assertFalse(loggedIn)
+        assertEquals("Email required", vm.emailError)
+        assertEquals("Password required", vm.passwordError)
+
+        // Invalid email format
+        vm.onEmailChange("invalid-email-format")
+        vm.onPasswordChange("anyPassword")
+        val invalidEmailResult = vm.login(
+            errEmailRequired = "Email required",
+            errInvalidEmail = "Invalid email",
+            errPasswordRequired = "Password required",
+            errInvalidCredentials = "Wrong credentials",
+            onSuccess = { loggedIn = true }
+        )
+        assertFalse(invalidEmailResult)
+        assertEquals("Invalid email", vm.emailError)
+
+        // Fill demo account
+        vm.fillDemoAccount()
+        val defaultUser = com.example.taskmate.data.UserManager.defaultUsers.first()
+        assertEquals(defaultUser.email, vm.email)
+        assertEquals(defaultUser.password, vm.password)
+        assertNull(vm.emailError)
+        assertNull(vm.passwordError)
+
+        // Successful login
+        val successResult = vm.login(
+            errEmailRequired = "Email required",
+            errInvalidEmail = "Invalid email",
+            errPasswordRequired = "Password required",
+            errInvalidCredentials = "Wrong credentials",
+            onSuccess = { loggedIn = true }
+        )
+        assertTrue(successResult)
+        assertTrue(loggedIn)
+        assertNull(vm.generalError)
+    }
+
+    @Test
+    fun signUpViewModel_validationsAndSuccess() {
+        val vm = com.example.taskmate.ui.viewmodel.SignUpViewModel()
+        var signedUp = false
+
+        // Empty fields validation
+        val emptyResult = vm.signUp(
+            errFirstNameRequired = "Front name required",
+            errLastNameRequired = "Back name required",
+            errEmailRequired = "Email required",
+            errInvalidEmail = "Invalid email",
+            errEmailRegistered = "Email registered",
+            errPasswordRequired = "Password required",
+            errPasswordTooShort = "Min 6 chars",
+            errConfirmPasswordRequired = "Confirm password required",
+            errPasswordsDoNotMatch = "Mismatch",
+            msgSuccess = "Success",
+            onSuccess = { signedUp = true }
+        )
+        assertFalse(emptyResult)
+        assertEquals("Front name required", vm.firstNameError)
+        assertEquals("Back name required", vm.lastNameError)
+        assertEquals("Email required", vm.emailError)
+        assertEquals("Password required", vm.passwordError)
+        assertEquals("Confirm password required", vm.confirmPasswordError)
+
+        // Front Name and Back Name combine into Full Name
+        vm.onFirstNameChange("John")
+        vm.onLastNameChange("Doe")
+        assertEquals("John Doe", vm.fullName)
+
+        // Password mismatch validation
+        vm.onEmailChange("john@example.com")
+        vm.onPasswordChange("password123")
+        vm.onConfirmPasswordChange("differentPassword")
+
+        val mismatchResult = vm.signUp(
+            errFirstNameRequired = "Front name required",
+            errLastNameRequired = "Back name required",
+            errEmailRequired = "Email required",
+            errInvalidEmail = "Invalid email",
+            errEmailRegistered = "Email registered",
+            errPasswordRequired = "Password required",
+            errPasswordTooShort = "Min 6 chars",
+            errConfirmPasswordRequired = "Confirm password required",
+            errPasswordsDoNotMatch = "Mismatch",
+            msgSuccess = "Success",
+            onSuccess = { signedUp = true }
+        )
+        assertFalse(mismatchResult)
+        assertEquals("Mismatch", vm.confirmPasswordError)
+
+        // Valid signup
+        vm.onConfirmPasswordChange("password123")
+        val successResult = vm.signUp(
+            errFirstNameRequired = "Front name required",
+            errLastNameRequired = "Back name required",
+            errEmailRequired = "Email required",
+            errInvalidEmail = "Invalid email",
+            errEmailRegistered = "Email registered",
+            errPasswordRequired = "Password required",
+            errPasswordTooShort = "Min 6 chars",
+            errConfirmPasswordRequired = "Confirm password required",
+            errPasswordsDoNotMatch = "Mismatch",
+            msgSuccess = "Success",
+            onSuccess = { signedUp = true }
+        )
+        assertTrue(successResult)
+        assertTrue(signedUp)
+        assertEquals("Success", vm.successMessage)
+        assertEquals("John Doe", com.example.taskmate.data.UserManager.currentUser?.fullName)
     }
 }

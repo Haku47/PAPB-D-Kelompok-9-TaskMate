@@ -3,18 +3,16 @@ package com.example.taskmate.ui.screens.auth
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -32,30 +30,32 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
 import com.example.taskmate.ui.theme.White
 import com.example.taskmate.ui.theme.strings
+import com.example.taskmate.ui.viewmodel.ForgotPasswordViewModel
 
 @Composable
 fun ForgotPasswordScreen(
     onSendEmail: () -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    viewModel: ForgotPasswordViewModel = viewModel()
 ) {
     val s = strings
     val focusManager = LocalFocusManager.current
-    var email by remember { mutableStateOf("") }
     val fieldShape = RoundedCornerShape(10.dp)
+    val errorColor = Color(0xFFE53935)
 
     Scaffold(
         modifier = Modifier
@@ -70,7 +70,14 @@ fun ForgotPasswordScreen(
                     .padding(horizontal = 24.dp, vertical = 24.dp)
             ) {
                 Button(
-                    onClick = onSendEmail,
+                    onClick = {
+                        viewModel.sendResetEmail(
+                            errEmailRequired = s.errorEmailRequired,
+                            errInvalidEmail = s.errorInvalidEmail,
+                            errUserNotFound = s.errorUserNotFound,
+                            onSuccess = onSendEmail
+                        )
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -144,8 +151,8 @@ fun ForgotPasswordScreen(
             )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
+                value = viewModel.email,
+                onValueChange = { viewModel.onEmailChange(it) },
                 placeholder = {
                     Text(
                         text = s.enterEmailPlaceholder,
@@ -156,16 +163,26 @@ fun ForgotPasswordScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = fieldShape,
                 singleLine = true,
+                isError = viewModel.emailError != null,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedBorderColor = if (viewModel.emailError != null) errorColor else BlueNormal,
+                    unfocusedBorderColor = if (viewModel.emailError != null) errorColor else AppThemeColors.border,
                     focusedTextColor = AppThemeColors.textPrimary,
                     unfocusedTextColor = AppThemeColors.textPrimary,
                     focusedContainerColor = AppThemeColors.searchBarContainer,
                     unfocusedContainerColor = AppThemeColors.searchBarContainer
                 )
             )
+            if (viewModel.emailError != null) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = viewModel.emailError!!,
+                    color = errorColor,
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(start = 4.dp)
+                )
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
         }

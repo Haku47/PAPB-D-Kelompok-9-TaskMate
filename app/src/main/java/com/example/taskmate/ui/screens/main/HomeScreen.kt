@@ -24,11 +24,11 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import com.example.taskmate.data.DummyData
 import com.example.taskmate.data.TaskItem
+import com.example.taskmate.data.UserManager
 import com.example.taskmate.ui.components.AppConfirmDialog
 import com.example.taskmate.ui.components.ScheduleItemCard
 import com.example.taskmate.ui.components.TaskItemCard
 import com.example.taskmate.ui.theme.AppThemeColors
-
 import com.example.taskmate.ui.theme.strings
 
 @Composable
@@ -68,8 +68,10 @@ fun HomeScreen(
     ) {
         item {
             Spacer(modifier = Modifier.height(20.dp))
+            val user = UserManager.currentUser
+            val greetingName = user?.fullName?.split(" ")?.firstOrNull()?.ifBlank { user.username } ?: user?.username ?: "Mad"
             Text(
-                text = s.greeting,
+                text = s.greetingWithName(greetingName),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 color = AppThemeColors.textPrimary

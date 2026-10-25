@@ -8,11 +8,6 @@ import com.example.taskmate.data.DummyData
 import com.example.taskmate.data.TaskItem
 import com.example.taskmate.ui.components.TaskDateHelper
 
-/**
- * ViewModel untuk EditTaskDetailScreen.
- * Mempertahankan data isian saat rotasi layar, mengelola validasi setiap elemen input,
- * dan memproses penggabungan tanggal (kalender) & waktu (jam) menjadi tenggat waktu utuh.
- */
 class EditTaskViewModel : ViewModel() {
     var taskId by mutableStateOf<Int?>(null)
         private set

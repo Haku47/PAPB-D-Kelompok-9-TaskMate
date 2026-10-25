@@ -18,6 +18,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         com.example.taskmate.data.DummyData.init(applicationContext)
+        com.example.taskmate.data.UserManager.init(applicationContext)
         enableEdgeToEdge()
 
         WindowCompat.getInsetsController(window, window.decorView).apply {

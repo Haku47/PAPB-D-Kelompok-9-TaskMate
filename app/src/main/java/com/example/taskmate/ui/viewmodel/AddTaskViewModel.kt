@@ -7,12 +7,6 @@ import androidx.lifecycle.ViewModel
 import com.example.taskmate.data.DummyData
 import com.example.taskmate.data.TaskItem
 
-/**
- * ViewModel untuk AddTaskScreen.
- * Mempertahankan state saat orientasi layar berubah (Portrait <-> Landscape),
- * mengelola mekanisme validasi setiap elemen input,
- * serta menggabungkan dua input berbeda (Tanggal dan Waktu) menjadi string Tenggat Waktu tugas.
- */
 class AddTaskViewModel : ViewModel() {
     var taskTitle by mutableStateOf("")
         private set

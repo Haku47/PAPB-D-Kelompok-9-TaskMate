@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.taskmate.data.UserManager
 import com.example.taskmate.ui.theme.AppLanguage
 import com.example.taskmate.ui.theme.BackgroundDark
 import com.example.taskmate.ui.theme.BlueNormal
@@ -149,7 +150,10 @@ fun SettingsScreen(
             }
 
             Button(
-                onClick = onLogout,
+                onClick = {
+                    UserManager.logout()
+                    onLogout()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),

@@ -31,9 +31,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskmate.data.DummyData
+import com.example.taskmate.data.UserManager
 import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
-
 import com.example.taskmate.ui.theme.strings
 
 @Composable
@@ -41,6 +41,10 @@ fun ProfileScreen(
     onNavigateToSettings: () -> Unit
 ) {
     val s = strings
+    val user = UserManager.currentUser
+    val displayName = user?.fullName?.ifBlank { user.username } ?: "Madnesses Roman"
+    val displayEmail = user?.email ?: "madnessesroman@abcde.xyz"
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -101,7 +105,7 @@ fun ProfileScreen(
                         .padding(top = 55.dp, bottom = 24.dp)
                 ) {
                     Text(
-                        text = "Madnesses Roman",
+                        text = displayName,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = AppThemeColors.textPrimary,
@@ -112,7 +116,7 @@ fun ProfileScreen(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "madnessesroman@abcde.xyz",
+                        text = displayEmail,
                         fontSize = 12.sp,
                         color = AppThemeColors.textSecondary,
                         textAlign = TextAlign.Center,

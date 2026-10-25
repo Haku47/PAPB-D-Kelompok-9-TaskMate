@@ -16,11 +16,6 @@ data class SessionErrorState(
     val roomError: String? = null
 )
 
-/**
- * ViewModel untuk AddCourseScreen.
- * Bertanggung jawab mempertahankan state saat orientasi layar berubah (Portrait <-> Landscape)
- * dan mengelola mekanisme validasi setiap elemen input serta penggabungan input (Nama Dosen & Waktu).
- */
 class AddCourseViewModel : ViewModel() {
     var courseTitle by mutableStateOf("")
         private set

@@ -340,6 +340,7 @@ object DummyData {
     fun init(context: Context) {
         prefs = context.getSharedPreferences("taskmate_storage", Context.MODE_PRIVATE)
         loadData()
+        UserManager.init(context)
     }
 
     private fun loadData() {

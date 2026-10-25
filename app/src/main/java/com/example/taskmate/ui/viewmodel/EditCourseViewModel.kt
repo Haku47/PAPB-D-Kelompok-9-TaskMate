@@ -12,10 +12,6 @@ import com.example.taskmate.data.SessionInputState
 import com.example.taskmate.data.toCourseSession
 import com.example.taskmate.data.toInputState
 
-/**
- * ViewModel untuk EditCourseScreen.
- * Mempertahankan isian data saat rotasi layar dan memvalidasi setiap input form saat perubahan disimpan.
- */
 class EditCourseViewModel : ViewModel() {
     var courseId by mutableStateOf<Int?>(null)
         private set

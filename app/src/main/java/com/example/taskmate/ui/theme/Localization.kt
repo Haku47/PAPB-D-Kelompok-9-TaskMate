@@ -163,6 +163,29 @@ interface AppStrings {
     val confirmNewPasswordLabel: String
     val enterConfirmNewPasswordPlaceholder: String
     val savePasswordButton: String
+
+    val greetingWithName: (String) -> String
+    val frontNameLabel: String
+    val backNameLabel: String
+    val enterFrontNamePlaceholder: String
+    val enterBackNamePlaceholder: String
+    val combinedFullNamePreview: (String) -> String
+    val errorFrontNameRequired: String
+    val errorBackNameRequired: String
+    val errorUsernameRequired: String
+    val errorUsernameTooShort: String
+    val errorUsernameTaken: String
+    val errorEmailRequired: String
+    val errorInvalidEmail: String
+    val errorEmailRegistered: String
+    val errorPasswordRequired: String
+    val errorPasswordTooShort: String
+    val errorConfirmPasswordRequired: String
+    val errorPasswordsDoNotMatch: String
+    val errorInvalidCredentials: String
+    val errorUserNotFound: String
+    val registrationSuccessful: String
+    val passwordResetSuccess: String
 }
 
 object EnglishStrings : AppStrings {
@@ -324,6 +347,29 @@ object EnglishStrings : AppStrings {
     override val confirmNewPasswordLabel = "Confirm New Password"
     override val enterConfirmNewPasswordPlaceholder = "Enter new password again"
     override val savePasswordButton = "Save"
+
+    override val greetingWithName: (String) -> String = { name -> "Hello, $name!" }
+    override val frontNameLabel = "Front Name"
+    override val backNameLabel = "Back Name"
+    override val enterFrontNamePlaceholder = "Front name"
+    override val enterBackNamePlaceholder = "Back name"
+    override val combinedFullNamePreview: (String) -> String = { name -> "Full Name: $name" }
+    override val errorFrontNameRequired = "Front name is required"
+    override val errorBackNameRequired = "Back name is required"
+    override val errorUsernameRequired = "Username is required"
+    override val errorUsernameTooShort = "Username must be at least 3 characters"
+    override val errorUsernameTaken = "Username is already taken"
+    override val errorEmailRequired = "Email is required"
+    override val errorInvalidEmail = "Invalid email address format"
+    override val errorEmailRegistered = "Email is already registered"
+    override val errorPasswordRequired = "Password is required"
+    override val errorPasswordTooShort = "Password must be at least 6 characters"
+    override val errorConfirmPasswordRequired = "Confirm password is required"
+    override val errorPasswordsDoNotMatch = "Passwords do not match"
+    override val errorInvalidCredentials = "Wrong username/email or password"
+    override val errorUserNotFound = "No account found with this email"
+    override val registrationSuccessful = "Registration successful! You are now logged in"
+    override val passwordResetSuccess = "Password reset successfully! Please log in"
 }
 
 object IndonesianStrings : AppStrings {
@@ -494,6 +540,29 @@ object IndonesianStrings : AppStrings {
     override val confirmNewPasswordLabel = "Konfirmasi Kata Sandi Baru"
     override val enterConfirmNewPasswordPlaceholder = "Masukkan kata sandi baru lagi"
     override val savePasswordButton = "Simpan"
+
+    override val greetingWithName: (String) -> String = { name -> "Halo, $name!" }
+    override val frontNameLabel = "Nama Depan"
+    override val backNameLabel = "Nama Belakang"
+    override val enterFrontNamePlaceholder = "Nama depan"
+    override val enterBackNamePlaceholder = "Nama belakang"
+    override val combinedFullNamePreview: (String) -> String = { name -> "Nama Lengkap: $name" }
+    override val errorFrontNameRequired = "Nama depan wajib diisi"
+    override val errorBackNameRequired = "Nama belakang wajib diisi"
+    override val errorUsernameRequired = "Nama pengguna wajib diisi"
+    override val errorUsernameTooShort = "Nama pengguna minimal 3 karakter"
+    override val errorUsernameTaken = "Nama pengguna sudah digunakan"
+    override val errorEmailRequired = "Email wajib diisi"
+    override val errorInvalidEmail = "Format alamat email tidak valid"
+    override val errorEmailRegistered = "Email sudah terdaftar"
+    override val errorPasswordRequired = "Kata sandi wajib diisi"
+    override val errorPasswordTooShort = "Kata sandi minimal 6 karakter"
+    override val errorConfirmPasswordRequired = "Konfirmasi kata sandi wajib diisi"
+    override val errorPasswordsDoNotMatch = "Konfirmasi kata sandi tidak cocok"
+    override val errorInvalidCredentials = "Nama pengguna/email atau kata sandi salah"
+    override val errorUserNotFound = "Tidak ditemukan akun dengan email tersebut"
+    override val registrationSuccessful = "Pendaftaran berhasil! Anda berhasil masuk"
+    override val passwordResetSuccess = "Kata sandi berhasil diubah! Silakan masuk"
 }
 
 val LocalAppStrings = staticCompositionLocalOf<AppStrings> { EnglishStrings }
