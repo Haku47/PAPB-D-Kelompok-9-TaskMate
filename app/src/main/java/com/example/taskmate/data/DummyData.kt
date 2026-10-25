@@ -1,17 +1,34 @@
 package com.example.taskmate.data
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-
 import com.example.taskmate.ui.components.CourseTimeHelper
+import org.json.JSONArray
+import org.json.JSONObject
 
 data class CourseSession(
     val day: String,
     val time: String,
     val room: String = ""
-)
+) {
+    fun toJson(): JSONObject = JSONObject().apply {
+        put("day", day)
+        put("time", time)
+        put("room", room)
+    }
+
+    companion object {
+        fun fromJson(json: JSONObject): CourseSession = CourseSession(
+            day = json.optString("day", ""),
+            time = json.optString("time", ""),
+            room = json.optString("room", "")
+        )
+    }
+}
 
 data class SessionInputState(
     val day: String = "",
@@ -56,6 +73,40 @@ data class CourseItem(
         } else {
             emptyList()
         }
+
+    fun toJson(): JSONObject = JSONObject().apply {
+        put("id", id)
+        put("title", title)
+        put("day", day)
+        put("time", time)
+        put("room", room)
+        put("lecturer", lecturer)
+        val arr = JSONArray()
+        sessions.forEach { arr.put(it.toJson()) }
+        put("sessions", arr)
+    }
+
+    companion object {
+        fun fromJson(json: JSONObject): CourseItem {
+            val sessionsList = mutableListOf<CourseSession>()
+            val sessionsArray = json.optJSONArray("sessions")
+            if (sessionsArray != null) {
+                for (i in 0 until sessionsArray.length()) {
+                    val sObj = sessionsArray.optJSONObject(i)
+                    if (sObj != null) sessionsList.add(CourseSession.fromJson(sObj))
+                }
+            }
+            return CourseItem(
+                id = json.optInt("id", 0),
+                title = json.optString("title", ""),
+                day = json.optString("day", ""),
+                time = json.optString("time", ""),
+                room = json.optString("room", ""),
+                lecturer = json.optString("lecturer", "Dr. Eng. Herman Tolle, S.T., M.T."),
+                sessions = sessionsList
+            )
+        }
+    }
 }
 
 data class TaskItem(
@@ -66,15 +117,39 @@ data class TaskItem(
     val dueDate: String,
     val status: String = "In Progress",
     val description: String = "Complete the exercise assigned in class and upload the report before the deadline."
-)
+) {
+    fun toJson(): JSONObject = JSONObject().apply {
+        put("id", id)
+        put("title", title)
+        put("course", course)
+        put("daysLeft", daysLeft)
+        put("dueDate", dueDate)
+        put("status", status)
+        put("description", description)
+    }
+
+    companion object {
+        fun fromJson(json: JSONObject): TaskItem = TaskItem(
+            id = json.optInt("id", 0),
+            title = json.optString("title", ""),
+            course = json.optString("course", ""),
+            daysLeft = json.optString("daysLeft", ""),
+            dueDate = json.optString("dueDate", ""),
+            status = json.optString("status", "In Progress"),
+            description = json.optString("description", "")
+        )
+    }
+}
 
 object DummyData {
+    private var prefs: SharedPreferences? = null
     var finishedTasksCount by mutableStateOf(20)
 
-    // -------------------------------------------------------------------------
-    // 1. Course List
-    // -------------------------------------------------------------------------
-    val courses = mutableStateListOf(
+    val courses = mutableStateListOf<CourseItem>()
+    val schedules = mutableStateListOf<CourseItem>()
+    val tasks = mutableStateListOf<TaskItem>()
+
+    private val initialCourses = listOf(
         CourseItem(
             id = 1,
             title = "PAPB D",
@@ -129,10 +204,7 @@ object DummyData {
         )
     )
 
-    // -------------------------------------------------------------------------
-    // 2. Schedule List
-    // -------------------------------------------------------------------------
-    val schedules = mutableStateListOf(
+    private val initialSchedules = listOf(
         CourseItem(
             id = 101,
             title = "JST D",
@@ -199,10 +271,7 @@ object DummyData {
         )
     )
 
-    // -------------------------------------------------------------------------
-    // 3. Task List
-    // -------------------------------------------------------------------------
-    val tasks = mutableStateListOf(
+    private val initialTasks = listOf(
         TaskItem(
             id = 1,
             title = "Assignment 1: abcd",
@@ -250,6 +319,107 @@ object DummyData {
         )
     )
 
+    init {
+        resetToInitialDefaults()
+    }
+
+    fun resetToInitialDefaults() {
+        courses.clear()
+        courses.addAll(initialCourses)
+        schedules.clear()
+        schedules.addAll(initialSchedules)
+        tasks.clear()
+        tasks.addAll(initialTasks)
+        finishedTasksCount = 20
+    }
+
+    /**
+     * Menginisialisasi penyimpanan lokal SharedPreferences agar data Course dan Task
+     * tetap tersimpan meskipun aplikasi ditutup / diberhentikan.
+     */
+    fun init(context: Context) {
+        prefs = context.getSharedPreferences("taskmate_storage", Context.MODE_PRIVATE)
+        loadData()
+    }
+
+    private fun loadData() {
+        val sp = prefs ?: return
+        val coursesJson = sp.getString("courses", null)
+        val schedulesJson = sp.getString("schedules", null)
+        val tasksJson = sp.getString("tasks", null)
+        finishedTasksCount = sp.getInt("finished_count", 20)
+
+        if (coursesJson != null) {
+            try {
+                courses.clear()
+                val arr = JSONArray(coursesJson)
+                for (i in 0 until arr.length()) {
+                    val obj = arr.optJSONObject(i)
+                    if (obj != null) courses.add(CourseItem.fromJson(obj))
+                }
+            } catch (e: Exception) {
+                courses.clear()
+                courses.addAll(initialCourses)
+            }
+        } else {
+            saveData()
+        }
+
+        if (schedulesJson != null) {
+            try {
+                schedules.clear()
+                val arr = JSONArray(schedulesJson)
+                for (i in 0 until arr.length()) {
+                    val obj = arr.optJSONObject(i)
+                    if (obj != null) schedules.add(CourseItem.fromJson(obj))
+                }
+            } catch (e: Exception) {
+                schedules.clear()
+                schedules.addAll(initialSchedules)
+            }
+        } else {
+            saveData()
+        }
+
+        if (tasksJson != null) {
+            try {
+                tasks.clear()
+                val arr = JSONArray(tasksJson)
+                for (i in 0 until arr.length()) {
+                    val obj = arr.optJSONObject(i)
+                    if (obj != null) tasks.add(TaskItem.fromJson(obj))
+                }
+            } catch (e: Exception) {
+                tasks.clear()
+                tasks.addAll(initialTasks)
+            }
+        } else {
+            saveData()
+        }
+    }
+
+    private fun saveData() {
+        val sp = prefs ?: return
+        try {
+            val coursesArr = JSONArray()
+            courses.forEach { coursesArr.put(it.toJson()) }
+
+            val schedulesArr = JSONArray()
+            schedules.forEach { schedulesArr.put(it.toJson()) }
+
+            val tasksArr = JSONArray()
+            tasks.forEach { tasksArr.put(it.toJson()) }
+
+            sp.edit()
+                .putString("courses", coursesArr.toString())
+                .putString("schedules", schedulesArr.toString())
+                .putString("tasks", tasksArr.toString())
+                .putInt("finished_count", finishedTasksCount)
+                .apply()
+        } catch (_: Exception) {
+        }
+    }
+
     fun getCourseById(id: Int): CourseItem? {
         return courses.find { it.id == id } ?: schedules.find { it.id == id }
     }
@@ -277,6 +447,7 @@ object DummyData {
                 )
             }
         }
+        saveData()
     }
 
     fun updateCourse(course: CourseItem) {
@@ -302,16 +473,19 @@ object DummyData {
                 )
             }
         }
+        saveData()
     }
 
     fun addTask(task: TaskItem) {
         tasks.add(0, task)
+        saveData()
     }
 
     fun updateTask(task: TaskItem) {
         val index = tasks.indexOfFirst { it.id == task.id }
         if (index != -1) {
             tasks[index] = task
+            saveData()
         }
     }
 
@@ -321,17 +495,21 @@ object DummyData {
             val task = tasks[index]
             tasks[index] = task.copy(status = "Finished", daysLeft = "Completed")
             finishedTasksCount++
+            saveData()
         }
     }
 
     fun deleteCourse(id: Int): Boolean {
         val courseRemoved = courses.removeAll { it.id == id }
         val scheduleRemoved = schedules.removeAll { it.id == id }
+        saveData()
         return courseRemoved || scheduleRemoved
     }
 
     fun deleteTask(id: Int): Boolean {
-        return tasks.removeAll { it.id == id }
+        val removed = tasks.removeAll { it.id == id }
+        saveData()
+        return removed
     }
 
     fun generateCourseId(): Int {

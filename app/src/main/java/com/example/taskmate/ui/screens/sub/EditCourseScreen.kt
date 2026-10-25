@@ -35,8 +35,8 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,12 +49,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.taskmate.data.CourseItem
-import com.example.taskmate.data.CourseSession
-import com.example.taskmate.data.DummyData
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.taskmate.data.SessionInputState
-import com.example.taskmate.data.toCourseSession
-import com.example.taskmate.data.toInputState
 import com.example.taskmate.ui.components.AppAlertDialog
 import com.example.taskmate.ui.components.CourseTimeInputField
 import com.example.taskmate.ui.components.DialogType
@@ -62,47 +58,24 @@ import com.example.taskmate.ui.theme.AppThemeColors
 import com.example.taskmate.ui.theme.BlueNormal
 import com.example.taskmate.ui.theme.White
 import com.example.taskmate.ui.theme.strings
+import com.example.taskmate.ui.viewmodel.EditCourseViewModel
 
 @Composable
 fun EditCourseScreen(
     courseId: Int,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    viewModel: EditCourseViewModel = viewModel()
 ) {
     val s = strings
     val focusManager = LocalFocusManager.current
-    val course = DummyData.getCourseById(courseId)
 
-    var courseTitle by remember(course) { mutableStateOf(course?.title ?: "") }
-    var lecturerName by remember(course) { mutableStateOf(course?.lecturer ?: "") }
-
-    val initialSessions = remember(course) {
-        val courseSessions = course?.allSessions
-        if (!courseSessions.isNullOrEmpty()) {
-            courseSessions.map { it.toInputState() }
-        } else {
-            val times = course?.time ?: ""
-            val parsed = com.example.taskmate.ui.components.CourseTimeHelper.parseTimeRange(times)
-            listOf(
-                SessionInputState(
-                    day = course?.day ?: "",
-                    startTime = parsed.first.ifBlank { "09:35 AM" },
-                    endTime = parsed.second.ifBlank { "11:15 AM" },
-                    room = course?.room ?: ""
-                )
-            )
-        }
-    }
-
-    val sessions = remember(initialSessions) {
-        mutableStateListOf<SessionInputState>().apply {
-            addAll(initialSessions)
-        }
+    LaunchedEffect(courseId) {
+        viewModel.loadCourse(courseId)
     }
 
     var showDialog by remember { mutableStateOf(false) }
 
     val fieldShape = RoundedCornerShape(10.dp)
-    // 5 hari akademik wajib: Senin sampai Jumat
     val weekDays = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
 
     if (showDialog) {
@@ -129,24 +102,17 @@ fun EditCourseScreen(
             ) {
                 Button(
                     onClick = {
-                        val courseSessions = sessions.map { it.toCourseSession() }
-                        val primarySession = courseSessions.firstOrNull() ?: CourseSession(
-                            day = course?.day ?: "Monday",
-                            time = course?.time ?: "08:00 AM - 10:00 AM",
-                            room = course?.room ?: "Room -"
+                        focusManager.clearFocus()
+                        viewModel.saveChanges(
+                            errCourseTitleReq = s.errorCourseTitleRequired,
+                            errLecturerFirstReq = s.errorLecturerFirstNameRequired,
+                            errLecturerLastReq = s.errorLecturerLastNameRequired,
+                            errDayReq = s.errorDayRequired,
+                            errRoomReq = s.errorRoomRequired,
+                            onSuccess = {
+                                showDialog = true
+                            }
                         )
-                        DummyData.updateCourse(
-                            CourseItem(
-                                id = courseId,
-                                title = courseTitle.ifBlank { course?.title ?: "" },
-                                day = primarySession.day.ifBlank { course?.day ?: "Monday" },
-                                time = primarySession.time.ifBlank { course?.time ?: "08:00 AM - 10:00 AM" },
-                                room = primarySession.room.ifBlank { course?.room ?: "Room -" },
-                                lecturer = lecturerName.ifBlank { course?.lecturer ?: "" },
-                                sessions = courseSessions
-                            )
-                        )
-                        showDialog = true
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -179,7 +145,7 @@ fun EditCourseScreen(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Header: Tombol Circle Back & Judul Screen
+            // Header: Tombol Lingkaran Kembali & Judul Layar
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -189,12 +155,9 @@ fun EditCourseScreen(
                     modifier = Modifier
                         .size(36.dp)
                         .clip(CircleShape)
-                        .border(
-                            width = 1.5.dp,
-                            color = AppThemeColors.textPrimary,
-                            shape = CircleShape
-                        )
-                        .clickable { onNavigateBack() }
+                        .background(AppThemeColors.searchBarContainer)
+                        .clickable { onNavigateBack() },
+                    contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
@@ -217,7 +180,7 @@ fun EditCourseScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Course Title
+            // 1. Course Title (Mekanisme Validasi ViewModel)
             Text(
                 text = s.courseTitleLabel,
                 fontSize = 13.sp,
@@ -226,11 +189,12 @@ fun EditCourseScreen(
             )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
-                value = courseTitle,
-                onValueChange = { courseTitle = it },
+                value = viewModel.courseTitle,
+                onValueChange = { viewModel.onCourseTitleChange(it) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = fieldShape,
                 singleLine = true,
+                isError = viewModel.courseTitleError != null,
                 placeholder = {
                     Text(
                         text = "e.g. PAPB D",
@@ -239,18 +203,26 @@ fun EditCourseScreen(
                     )
                 },
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedBorderColor = if (viewModel.courseTitleError != null) Color(0xFFE53935) else BlueNormal,
+                    unfocusedBorderColor = if (viewModel.courseTitleError != null) Color(0xFFE53935) else AppThemeColors.border,
                     focusedTextColor = AppThemeColors.textPrimary,
                     unfocusedTextColor = AppThemeColors.textPrimary,
                     focusedContainerColor = AppThemeColors.searchBarContainer,
                     unfocusedContainerColor = AppThemeColors.searchBarContainer
                 )
             )
+            if (viewModel.courseTitleError != null) {
+                Text(
+                    text = viewModel.courseTitleError!!,
+                    color = Color(0xFFE53935),
+                    fontSize = 11.sp,
+                    modifier = Modifier.padding(start = 4.dp, top = 2.dp)
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Lecturer Name
+            // 2. Lecturer Name: Penggabungan data dari dua input (Nama Depan & Belakang)
             Text(
                 text = s.lecturerNameLabel,
                 fontSize = 13.sp,
@@ -258,33 +230,98 @@ fun EditCourseScreen(
                 color = AppThemeColors.textPrimary
             )
             Spacer(modifier = Modifier.height(6.dp))
-            OutlinedTextField(
-                value = lecturerName,
-                onValueChange = { lecturerName = it },
+
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                shape = fieldShape,
-                singleLine = true,
-                placeholder = {
-                    Text(
-                        text = "e.g. Dr. Eng. Herman Tolle, S.T., M.T.",
-                        color = AppThemeColors.textSecondary.copy(alpha = 0.5f),
-                        fontSize = 13.sp
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                // Nama Depan Dosen
+                Column(modifier = Modifier.weight(1f)) {
+                    OutlinedTextField(
+                        value = viewModel.lecturerFirstName,
+                        onValueChange = { viewModel.onLecturerFirstNameChange(it) },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = fieldShape,
+                        singleLine = true,
+                        isError = viewModel.lecturerFirstNameError != null,
+                        placeholder = {
+                            Text(
+                                text = "e.g. Herman",
+                                color = AppThemeColors.textSecondary.copy(alpha = 0.5f),
+                                fontSize = 12.sp
+                            )
+                        },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = if (viewModel.lecturerFirstNameError != null) Color(0xFFE53935) else BlueNormal,
+                            unfocusedBorderColor = if (viewModel.lecturerFirstNameError != null) Color(0xFFE53935) else AppThemeColors.border,
+                            focusedTextColor = AppThemeColors.textPrimary,
+                            unfocusedTextColor = AppThemeColors.textPrimary,
+                            focusedContainerColor = AppThemeColors.searchBarContainer,
+                            unfocusedContainerColor = AppThemeColors.searchBarContainer
+                        )
                     )
-                },
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = AppThemeColors.border,
-                    focusedTextColor = AppThemeColors.textPrimary,
-                    unfocusedTextColor = AppThemeColors.textPrimary,
-                    focusedContainerColor = AppThemeColors.searchBarContainer,
-                    unfocusedContainerColor = AppThemeColors.searchBarContainer
+                    if (viewModel.lecturerFirstNameError != null) {
+                        Text(
+                            text = viewModel.lecturerFirstNameError!!,
+                            color = Color(0xFFE53935),
+                            fontSize = 10.sp,
+                            modifier = Modifier.padding(start = 2.dp, top = 2.dp)
+                        )
+                    }
+                }
+
+                // Nama Belakang / Gelar Dosen
+                Column(modifier = Modifier.weight(1f)) {
+                    OutlinedTextField(
+                        value = viewModel.lecturerLastName,
+                        onValueChange = { viewModel.onLecturerLastNameChange(it) },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = fieldShape,
+                        singleLine = true,
+                        isError = viewModel.lecturerLastNameError != null,
+                        placeholder = {
+                            Text(
+                                text = "e.g. Tolle, S.T., M.T.",
+                                color = AppThemeColors.textSecondary.copy(alpha = 0.5f),
+                                fontSize = 12.sp
+                            )
+                        },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = if (viewModel.lecturerLastNameError != null) Color(0xFFE53935) else BlueNormal,
+                            unfocusedBorderColor = if (viewModel.lecturerLastNameError != null) Color(0xFFE53935) else AppThemeColors.border,
+                            focusedTextColor = AppThemeColors.textPrimary,
+                            unfocusedTextColor = AppThemeColors.textPrimary,
+                            focusedContainerColor = AppThemeColors.searchBarContainer,
+                            unfocusedContainerColor = AppThemeColors.searchBarContainer
+                        )
+                    )
+                    if (viewModel.lecturerLastNameError != null) {
+                        Text(
+                            text = viewModel.lecturerLastNameError!!,
+                            color = Color(0xFFE53935),
+                            fontSize = 10.sp,
+                            modifier = Modifier.padding(start = 2.dp, top = 2.dp)
+                        )
+                    }
+                }
+            }
+
+            // Preview Hasil Gabungan Dua Input Nama
+            if (viewModel.fullLecturerName.isNotBlank()) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = s.combinedLecturerPreview(viewModel.fullLecturerName),
+                    color = BlueNormal,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(start = 4.dp)
                 )
-            )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Sessions List (mempertahankan form asli)
-            sessions.forEachIndexed { index, sessionState ->
+            // 3. Sessions List
+            viewModel.sessions.forEachIndexed { index, sessionState ->
                 if (index > 0) {
                     Spacer(modifier = Modifier.height(16.dp))
                     HorizontalDivider(
@@ -294,32 +331,28 @@ fun EditCourseScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
+                val errState = viewModel.sessionErrors.getOrNull(index)
+
                 SessionFormFields(
                     index = index,
                     sessionState = sessionState,
-                    totalSessions = sessions.size,
+                    totalSessions = viewModel.sessions.size,
                     fieldShape = fieldShape,
                     weekDays = weekDays,
-                    onUpdateSession = { updated -> sessions[index] = updated },
-                    onRemoveSession = { sessions.removeAt(index) }
+                    dayError = errState?.dayError,
+                    roomError = errState?.roomError,
+                    onUpdateSession = { updated -> viewModel.onUpdateSession(index, updated) },
+                    onRemoveSession = { viewModel.removeSession(index) }
                 )
             }
 
             // Tombol "+ Another Session" (bisa tambah sampai 5 sesi / 5 hari)
-            if (sessions.size < 5) {
+            if (viewModel.sessions.size < 5) {
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
                     onClick = {
-                        val lastRoom = sessions.lastOrNull()?.room ?: ""
-                        sessions.add(
-                            SessionInputState(
-                                day = "",
-                                startTime = "09:35 AM",
-                                endTime = "11:15 AM",
-                                room = lastRoom
-                            )
-                        )
+                        viewModel.addSession()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -348,6 +381,8 @@ private fun SessionFormFields(
     totalSessions: Int,
     fieldShape: RoundedCornerShape,
     weekDays: List<String>,
+    dayError: String? = null,
+    roomError: String? = null,
     onUpdateSession: (SessionInputState) -> Unit,
     onRemoveSession: () -> Unit
 ) {
@@ -396,6 +431,7 @@ private fun SessionFormFields(
                 value = sessionState.day,
                 onValueChange = {},
                 readOnly = true,
+                isError = dayError != null,
                 placeholder = {
                     Text(
                         text = "e.g. Tuesday / Selasa",
@@ -414,8 +450,8 @@ private fun SessionFormFields(
                 shape = fieldShape,
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = BlueNormal,
-                    unfocusedBorderColor = AppThemeColors.border,
+                    focusedBorderColor = if (dayError != null) Color(0xFFE53935) else BlueNormal,
+                    unfocusedBorderColor = if (dayError != null) Color(0xFFE53935) else AppThemeColors.border,
                     focusedTextColor = AppThemeColors.textPrimary,
                     unfocusedTextColor = AppThemeColors.textPrimary,
                     focusedContainerColor = AppThemeColors.searchBarContainer,
@@ -459,6 +495,14 @@ private fun SessionFormFields(
                 }
             }
         }
+        if (dayError != null) {
+            Text(
+                text = dayError,
+                color = Color(0xFFE53935),
+                fontSize = 11.sp,
+                modifier = Modifier.padding(start = 4.dp, top = 2.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -482,9 +526,22 @@ private fun SessionFormFields(
             )
         }
 
+        // Preview hasil olahan gabungan waktu (Start Time - End Time)
+        val combinedTime = "${sessionState.startTime} - ${sessionState.endTime}".trim()
+        if (sessionState.startTime.isNotBlank() && sessionState.endTime.isNotBlank()) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = s.combinedTimeRangePreview(combinedTime),
+                color = BlueNormal,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(start = 4.dp)
+            )
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Location
+        // Location / Room
         Text(
             text = s.locationLabel,
             fontSize = 13.sp,
@@ -498,6 +555,7 @@ private fun SessionFormFields(
             modifier = Modifier.fillMaxWidth(),
             shape = fieldShape,
             singleLine = true,
+            isError = roomError != null,
             placeholder = {
                 Text(
                     text = "e.g. Room RV1.3",
@@ -506,13 +564,21 @@ private fun SessionFormFields(
                 )
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = BlueNormal,
-                unfocusedBorderColor = AppThemeColors.border,
+                focusedBorderColor = if (roomError != null) Color(0xFFE53935) else BlueNormal,
+                unfocusedBorderColor = if (roomError != null) Color(0xFFE53935) else AppThemeColors.border,
                 focusedTextColor = AppThemeColors.textPrimary,
                 unfocusedTextColor = AppThemeColors.textPrimary,
                 focusedContainerColor = AppThemeColors.searchBarContainer,
                 unfocusedContainerColor = AppThemeColors.searchBarContainer
             )
         )
+        if (roomError != null) {
+            Text(
+                text = roomError,
+                color = Color(0xFFE53935),
+                fontSize = 11.sp,
+                modifier = Modifier.padding(start = 4.dp, top = 2.dp)
+            )
+        }
     }
 }

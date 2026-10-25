@@ -76,10 +76,27 @@ interface AppStrings {
     val courseNameLabel: String
     val courseTitleLabel: String
     val lecturerNameLabel: String
+    val firstNameLabel: String
+    val lastNameLabel: String
+    val dueTimeLabel: String
     val scheduleInfoLabel: String
     val editCourseTitle: String
     val addCourseTitle: String
     val addTaskTitle: String
+
+    val errorCourseTitleRequired: String
+    val errorLecturerFirstNameRequired: String
+    val errorLecturerLastNameRequired: String
+    val errorDayRequired: String
+    val errorRoomRequired: String
+    val errorTaskTitleRequired: String
+    val errorDescriptionRequired: String
+    val errorCourseRequired: String
+    val errorDueDateRequired: String
+    val errorDueTimeRequired: String
+    val combinedLecturerPreview: (String) -> String
+    val combinedDueDatePreview: (String) -> String
+    val combinedTimeRangePreview: (String) -> String
 
     val dayFieldLabel: String
     val startTimeLabel: String
@@ -222,10 +239,27 @@ object EnglishStrings : AppStrings {
     override val courseNameLabel = "Course Name"
     override val courseTitleLabel = "Course Title"
     override val lecturerNameLabel = "Lecturer Name"
+    override val firstNameLabel = "First Name"
+    override val lastNameLabel = "Last Name"
+    override val dueTimeLabel = "Due Time"
     override val scheduleInfoLabel = "Schedule Information"
     override val editCourseTitle = "Edit Course"
     override val addCourseTitle = "Add Course"
     override val addTaskTitle = "Add Task"
+
+    override val errorCourseTitleRequired = "Course title cannot be empty"
+    override val errorLecturerFirstNameRequired = "First name cannot be empty"
+    override val errorLecturerLastNameRequired = "Last name cannot be empty"
+    override val errorDayRequired = "Day must be selected"
+    override val errorRoomRequired = "Room cannot be empty"
+    override val errorTaskTitleRequired = "Task title cannot be empty"
+    override val errorDescriptionRequired = "Description cannot be empty"
+    override val errorCourseRequired = "Course must be selected"
+    override val errorDueDateRequired = "Due date cannot be empty"
+    override val errorDueTimeRequired = "Due time cannot be empty"
+    override val combinedLecturerPreview: (String) -> String = { name -> "Combined Lecturer: $name" }
+    override val combinedDueDatePreview: (String) -> String = { date -> "Combined Due Date: $date" }
+    override val combinedTimeRangePreview: (String) -> String = { time -> "Combined Time: $time" }
 
     override val dayFieldLabel = "Day"
     override val startTimeLabel = "Start Time"
@@ -375,10 +409,27 @@ object IndonesianStrings : AppStrings {
     override val courseNameLabel = "Nama Mata Kuliah"
     override val courseTitleLabel = "Nama Mata Kuliah"
     override val lecturerNameLabel = "Nama Dosen"
+    override val firstNameLabel = "Nama Depan"
+    override val lastNameLabel = "Nama Belakang"
+    override val dueTimeLabel = "Waktu Tenggat"
     override val scheduleInfoLabel = "Informasi Jadwal"
     override val editCourseTitle = "Edit Mata Kuliah"
     override val addCourseTitle = "Tambah Mata Kuliah"
     override val addTaskTitle = "Tambah Tugas"
+
+    override val errorCourseTitleRequired = "Nama mata kuliah tidak boleh kosong"
+    override val errorLecturerFirstNameRequired = "Nama depan dosen tidak boleh kosong"
+    override val errorLecturerLastNameRequired = "Nama belakang dosen tidak boleh kosong"
+    override val errorDayRequired = "Hari kuliah wajib dipilih"
+    override val errorRoomRequired = "Ruangan tidak boleh kosong"
+    override val errorTaskTitleRequired = "Judul tugas tidak boleh kosong"
+    override val errorDescriptionRequired = "Deskripsi tugas tidak boleh kosong"
+    override val errorCourseRequired = "Mata kuliah wajib dipilih"
+    override val errorDueDateRequired = "Tanggal tenggat tidak boleh kosong"
+    override val errorDueTimeRequired = "Waktu tenggat tidak boleh kosong"
+    override val combinedLecturerPreview: (String) -> String = { name -> "Gabungan Nama Dosen: $name" }
+    override val combinedDueDatePreview: (String) -> String = { date -> "Gabungan Tenggat Waktu: $date" }
+    override val combinedTimeRangePreview: (String) -> String = { time -> "Gabungan Waktu: $time" }
 
     override val dayFieldLabel = "Hari"
     override val startTimeLabel = "Waktu Mulai"
