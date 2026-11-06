@@ -316,7 +316,7 @@ Pengujian otomatis dijalankan menggunakan JUnit 4 pada [`ExampleUnitTest.kt`](fi
 | :---: | :--- | :---: | :--- |
 | 1 | **Alviensyah Mohammad** | `245150219111002` | UI/UX Jetpack Compose, NavGraph, Hybrid Architecture & Firebase Integration |
 | 2 | *Anggota Kelompok 2* | `[NIM]` | Manajemen Modul Data Course & Schedules |
-| 3 | *Michael Asaloei* | `215150201111067` | Manajemen Modul Data Task & Quality Testing |
+| 3 | **Michael Asaloei** | `215150201111067` | Manajemen Modul Data Task & Quality Testing |
 | 4 | *Anggota Kelompok 4* | `[NIM]` | Dokumentasi Sistem & Standardisasi Desain |
 
 ---
