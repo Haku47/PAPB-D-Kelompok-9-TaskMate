@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/logo.png" alt="TaskMate Logo" width="130" style="border-radius: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);" />
+  <img src="app/src/main/res/drawable/ic_taskmate_logo.png" alt="TaskMate Logo" width="115" />
 </p>
 
 <h1 align="center">TaskMate</h1>
