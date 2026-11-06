@@ -4,7 +4,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.taskmate.data.UserManager
+import kotlinx.coroutines.launch
 
 class ForgotPasswordViewModel : ViewModel() {
     var email by mutableStateOf("")
@@ -12,6 +14,8 @@ class ForgotPasswordViewModel : ViewModel() {
     var emailError by mutableStateOf<String?>(null)
         private set
     var generalError by mutableStateOf<String?>(null)
+        private set
+    var isLoading by mutableStateOf(false)
         private set
 
     fun onEmailChange(value: String) {
@@ -40,15 +44,32 @@ class ForgotPasswordViewModel : ViewModel() {
             emailError = errInvalidEmail
             return false
         }
-        if (!UserManager.isEmailRegistered(trimmed)) {
-            emailError = errUserNotFound
-            return false
-        }
 
-        emailError = null
-        generalError = null
-        onSuccess()
-        return true
+        val repo = UserManager.repository
+        if (repo != null) {
+            isLoading = true
+            generalError = null
+            emailError = null
+            viewModelScope.launch {
+                val result = repo.sendPasswordReset(trimmed)
+                isLoading = false
+                if (result.isSuccess) {
+                    onSuccess()
+                } else {
+                    generalError = result.exceptionOrNull()?.localizedMessage ?: errUserNotFound
+                }
+            }
+            return true
+        } else {
+            // Fallback sinkronus untuk JVM Unit Test
+            if (!UserManager.isEmailRegistered(trimmed)) {
+                emailError = errUserNotFound
+                return false
+            }
+            emailError = null
+            generalError = null
+            onSuccess()
+            return true
+        }
     }
 }
-

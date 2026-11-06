@@ -4,7 +4,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.taskmate.data.UserManager
+import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
     var email by mutableStateOf("")
@@ -13,6 +15,8 @@ class LoginViewModel : ViewModel() {
         private set
     var isPasswordVisible by mutableStateOf(false)
         private set
+    var isLoading by mutableStateOf(false)
+        private set
 
     var emailError by mutableStateOf<String?>(null)
         private set
@@ -20,6 +24,9 @@ class LoginViewModel : ViewModel() {
         private set
     var generalError by mutableStateOf<String?>(null)
         private set
+
+    // Alias identifier agar mendukung input Email atau Username
+    val identifier: String get() = email
 
     fun onEmailChange(value: String) {
         email = value
@@ -53,7 +60,7 @@ class LoginViewModel : ViewModel() {
     fun fillDemoAccount() {
         val defaultUser = UserManager.users.firstOrNull() ?: UserManager.defaultUsers.first()
         email = defaultUser.email
-        password = defaultUser.password
+        password = "password123"
         emailError = null
         passwordError = null
         generalError = null
@@ -68,12 +75,15 @@ class LoginViewModel : ViewModel() {
     ): Boolean {
         var isValid = true
 
-        val trimmedEmail = email.trim()
+        val trimmedIdentifier = email.trim()
 
-        if (trimmedEmail.isBlank()) {
+        if (trimmedIdentifier.isBlank()) {
             emailError = errEmailRequired
             isValid = false
-        } else if (!isValidEmail(trimmedEmail)) {
+        } else if (trimmedIdentifier.contains("@") && !isValidEmail(trimmedIdentifier)) {
+            emailError = errInvalidEmail
+            isValid = false
+        } else if (!trimmedIdentifier.contains("@") && trimmedIdentifier.length < 3) {
             emailError = errInvalidEmail
             isValid = false
         } else {
@@ -91,14 +101,33 @@ class LoginViewModel : ViewModel() {
             return false
         }
 
-        val success = UserManager.login(trimmedEmail, password)
-        return if (success) {
+        val repo = UserManager.repository
+        if (repo != null) {
+            isLoading = true
             generalError = null
-            onSuccess()
-            true
+            viewModelScope.launch {
+                val result = repo.login(trimmedIdentifier, password)
+                isLoading = false
+                if (result.isSuccess) {
+                    generalError = null
+                    onSuccess()
+                } else {
+                    val ex = result.exceptionOrNull()
+                    generalError = ex?.localizedMessage ?: errInvalidCredentials
+                }
+            }
+            return true
         } else {
-            generalError = errInvalidCredentials
-            false
+            // Fallback sinkronus untuk JVM Unit Test
+            val success = UserManager.login(trimmedIdentifier, password)
+            return if (success) {
+                generalError = null
+                onSuccess()
+                true
+            } else {
+                generalError = errInvalidCredentials
+                false
+            }
         }
     }
 }

@@ -4,13 +4,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.taskmate.data.UserManager
+import kotlinx.coroutines.launch
 
 class SignUpViewModel : ViewModel() {
-    // Front Name dan Back Name (Dua input terpisah yang digabung menjadi Full Name)
     var firstName by mutableStateOf("")
         private set
     var lastName by mutableStateOf("")
+        private set
+    var username by mutableStateOf("")
         private set
 
     var email by mutableStateOf("")
@@ -24,10 +27,14 @@ class SignUpViewModel : ViewModel() {
         private set
     var isConfirmPasswordVisible by mutableStateOf(false)
         private set
+    var isLoading by mutableStateOf(false)
+        private set
 
     var firstNameError by mutableStateOf<String?>(null)
         private set
     var lastNameError by mutableStateOf<String?>(null)
+        private set
+    var usernameError by mutableStateOf<String?>(null)
         private set
     var emailError by mutableStateOf<String?>(null)
         private set
@@ -40,7 +47,6 @@ class SignUpViewModel : ViewModel() {
     var successMessage by mutableStateOf<String?>(null)
         private set
 
-    // Data olahan / gabungan dari Front Name dan Back Name -> Full Name
     val fullName: String
         get() = "$firstName $lastName".trim()
 
@@ -53,6 +59,12 @@ class SignUpViewModel : ViewModel() {
     fun onLastNameChange(value: String) {
         lastName = value
         if (lastNameError != null && value.isNotBlank()) lastNameError = null
+        if (generalError != null) generalError = null
+    }
+
+    fun onUsernameChange(value: String) {
+        username = value
+        if (usernameError != null && value.isNotBlank()) usernameError = null
         if (generalError != null) generalError = null
     }
 
@@ -106,7 +118,7 @@ class SignUpViewModel : ViewModel() {
         val trimmedLastName = lastName.trim()
         val trimmedEmail = email.trim()
 
-        // Validate Front Name
+        // 1. Validate Front Name
         if (trimmedFirstName.isBlank()) {
             firstNameError = errFirstNameRequired
             isValid = false
@@ -114,7 +126,7 @@ class SignUpViewModel : ViewModel() {
             firstNameError = null
         }
 
-        // Validate Back Name
+        // 2. Validate Back Name
         if (trimmedLastName.isBlank()) {
             lastNameError = errLastNameRequired
             isValid = false
@@ -122,7 +134,7 @@ class SignUpViewModel : ViewModel() {
             lastNameError = null
         }
 
-        // Validate email
+        // 3. Validate Email
         if (trimmedEmail.isBlank()) {
             emailError = errEmailRequired
             isValid = false
@@ -136,7 +148,7 @@ class SignUpViewModel : ViewModel() {
             emailError = null
         }
 
-        // Validate password
+        // 4. Validate Password
         if (password.isBlank()) {
             passwordError = errPasswordRequired
             isValid = false
@@ -147,7 +159,7 @@ class SignUpViewModel : ViewModel() {
             passwordError = null
         }
 
-        // Validate confirm password
+        // 5. Validate Confirm Password
         if (confirmPassword.isBlank()) {
             confirmPasswordError = errConfirmPasswordRequired
             isValid = false
@@ -162,25 +174,51 @@ class SignUpViewModel : ViewModel() {
             return false
         }
 
-        val derivedUsername = trimmedEmail.substringBefore('@').ifBlank {
-            "${trimmedFirstName}${trimmedLastName}".lowercase()
+        val targetUsername = username.trim().ifBlank {
+            trimmedEmail.substringBefore('@').ifBlank {
+                "${trimmedFirstName}${trimmedLastName}".lowercase()
+            }
         }
 
-        val registered = UserManager.register(
-            username = derivedUsername,
-            email = trimmedEmail,
-            password = password,
-            fullName = fullName
-        )
-
-        return if (registered) {
+        val repo = UserManager.repository
+        if (repo != null) {
+            isLoading = true
             generalError = null
-            successMessage = msgSuccess
-            onSuccess()
-            true
+            viewModelScope.launch {
+                val result = repo.register(
+                    username = targetUsername,
+                    email = trimmedEmail,
+                    password = password,
+                    fullName = fullName
+                )
+                isLoading = false
+                if (result.isSuccess) {
+                    generalError = null
+                    successMessage = msgSuccess
+                    onSuccess()
+                } else {
+                    val ex = result.exceptionOrNull()
+                    generalError = ex?.localizedMessage ?: errEmailRegistered
+                }
+            }
+            return true
         } else {
-            generalError = errEmailRegistered
-            false
+            // Fallback sinkronus untuk JVM Unit Test
+            val registered = UserManager.register(
+                username = targetUsername,
+                email = trimmedEmail,
+                password = password,
+                fullName = fullName
+            )
+            return if (registered) {
+                generalError = null
+                successMessage = msgSuccess
+                onSuccess()
+                true
+            } else {
+                generalError = errEmailRegistered
+                false
+            }
         }
     }
 }

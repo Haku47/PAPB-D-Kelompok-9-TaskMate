@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -234,18 +235,27 @@ fun LoginScreen(
                     onSuccess = onLoginSuccess
                 )
             },
+            enabled = !viewModel.isLoading,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(containerColor = BlueNormal)
         ) {
-            Text(
-                text = s.loginButton,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = White
-            )
+            if (viewModel.isLoading) {
+                CircularProgressIndicator(
+                    color = White,
+                    modifier = Modifier.size(24.dp),
+                    strokeWidth = 2.5.dp
+                )
+            } else {
+                Text(
+                    text = s.loginButton,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = White
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(20.dp))

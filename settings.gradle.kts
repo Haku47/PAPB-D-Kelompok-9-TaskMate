@@ -22,5 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Taskmate"
+rootProject.name = "PAPB-D-Kelompok-9-TaskMate"
 include(":app")

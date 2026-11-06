@@ -24,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -78,18 +79,27 @@ fun ForgotPasswordScreen(
                             onSuccess = onSendEmail
                         )
                     },
+                    enabled = !viewModel.isLoading,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = BlueNormal)
                 ) {
-                    Text(
-                        text = s.sendEmailButton,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = White
-                    )
+                    if (viewModel.isLoading) {
+                        CircularProgressIndicator(
+                            color = White,
+                            modifier = Modifier.size(24.dp),
+                            strokeWidth = 2.5.dp
+                        )
+                    } else {
+                        Text(
+                            text = s.sendEmailButton,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = White
+                        )
+                    }
                 }
             }
         }

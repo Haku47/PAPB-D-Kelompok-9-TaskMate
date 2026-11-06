@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Collection: users/{uid}
+    // Profil pengguna terenkapsulasi dengan Firebase Auth UID sebagai ID dokumen.
+    // Password tidak diizinkan disimpan di dokumen Firestore.
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      
+      allow create: if isOwner(userId)
+                    && request.resource.data.email == request.auth.token.email
+                    && !('password' in request.resource.data);
+
+      allow update: if isOwner(userId)
+                    // Email tidak boleh diubah sembarangan melalui update Firestore langsung
+                    && request.resource.data.email == resource.data.email
+                    && !('password' in request.resource.data);
+
+      allow delete: if isOwner(userId);
+    }
+
+    // Collection: usernames/{usernameLower}
+    // Reservasi atomik untuk menjamin username unik global & mendukung login via username.
+    match /usernames/{usernameLower} {
+      // Pembacaan diizinkan untuk validasi ketersediaan dan resolusi username saat login
+      allow read: if true;
+
+      // Pembuatan reservasi hanya diizinkan untuk UID yang sesuai dengan user terautentikasi
+      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
+
+      // Reservasi tidak dapat ditimpa oleh akun lain
+      allow update: if false;
+
+      // Pemilik dapat melepas username jika akun dihapus
+      allow delete: if isAuthenticated() && resource.data.uid == request.auth.uid;
+    }
+
+    // Default deny untuk collection/dokumen lainnya
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
