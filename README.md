@@ -274,7 +274,7 @@ app/src/main/java/com/example/taskmate/
 
 ### 2. Clone Repository
 ```bash
-git clone https://github.com/HakuCik/Taskmate.git
+git clone https://github.com/Haku47/Taskmate.git
 cd Taskmate
 ```
 
