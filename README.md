@@ -314,10 +314,10 @@ Pengujian otomatis dijalankan menggunakan JUnit 4 pada [`ExampleUnitTest.kt`](fi
 
 | No | Nama Mahasiswa | NIM | Peran Utama |
 | :---: | :--- | :---: | :--- |
-| 1 | **Alviensyah Mohammad** | `245150219111002` | UI/UX Jetpack Compose, NavGraph, Hybrid Architecture & Firebase Integration |
-| 2 | *Anggota Kelompok 2* | `[NIM]` | Manajemen Modul Data Course & Schedules |
-| 3 | **Michael Asaloei** | `215150201111067` | Manajemen Modul Data Task & Quality Testing |
-| 4 | *Anggota Kelompok 4* | `[NIM]` | Dokumentasi Sistem & Standardisasi Desain |
+| 1 | **Taqiyuddin Umar** | `245150219111001` | Dokumentasi Sistem & Standardisasi Desain |
+| 2 | **Alviensyah Mohammad** | `245150219111002` | UI/UX Jetpack Compose, NavGraph, Hybrid Architecture & Firebase Integration |
+| 3 | **Muhammad Naufal Dzakwan** | `245150207111098` | Manajemen Modul Data Course & Schedules |
+| 4 | **Michael Asaloei** | `215150201111067` | Manajemen Modul Data Task & Quality Testing |
 
 ---
 
