@@ -15,10 +15,14 @@ import androidx.compose.runtime.Composable
 import com.example.taskmate.ui.theme.ThemeState
 
 class MainActivity : ComponentActivity() {
+    private var lightSensorManager: com.example.taskmate.sensor.AmbientLightSensorManager? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         com.example.taskmate.data.DummyData.init(applicationContext)
         com.example.taskmate.data.UserManager.init(applicationContext)
+        com.example.taskmate.worker.TaskReminderWorker.scheduleTaskReminders(applicationContext)
+        lightSensorManager = com.example.taskmate.sensor.AmbientLightSensorManager(applicationContext)
         enableEdgeToEdge()
 
         WindowCompat.getInsetsController(window, window.decorView).apply {
@@ -29,6 +33,16 @@ class MainActivity : ComponentActivity() {
         setContent {
             TaskmateApp()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        lightSensorManager?.startListening()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        lightSensorManager?.stopListening()
     }
 }
 

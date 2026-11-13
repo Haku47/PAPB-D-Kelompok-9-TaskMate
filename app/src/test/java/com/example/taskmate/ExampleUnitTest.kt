@@ -6,6 +6,8 @@ import com.example.taskmate.ui.theme.FontSizeMode
 import com.example.taskmate.ui.theme.ThemeState
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.sp
+import com.example.taskmate.data.local.entity.toDomain
+import com.example.taskmate.data.local.entity.toEntity
 
 class ExampleUnitTest {
     @org.junit.Before
@@ -590,5 +592,64 @@ class ExampleUnitTest {
         assertTrue(signedUp)
         assertEquals("Success", vm.successMessage)
         assertEquals("John Doe", com.example.taskmate.data.UserManager.currentUser?.fullName)
+    }
+
+    @Test
+    fun roomEntities_courseAndTaskMappers_areLossless() {
+        val course = com.example.taskmate.data.CourseItem(
+            id = 123,
+            title = "Pemrograman Android",
+            day = "Monday",
+            time = "09:35 AM - 11:15 AM",
+            room = "RV1.3",
+            lecturer = "Herman Tolle",
+            sessions = listOf(
+                com.example.taskmate.data.CourseSession(day = "Monday", time = "09:35 AM - 11:15 AM", room = "RV1.3")
+            )
+        )
+        val courseEntity = course.toEntity(isSchedule = false)
+        val restoredCourse = courseEntity.toDomain()
+        assertEquals(course.id, restoredCourse.id)
+        assertEquals(course.title, restoredCourse.title)
+        assertEquals(1, restoredCourse.sessions.size)
+
+        val task = com.example.taskmate.data.TaskItem(
+            id = 456,
+            title = "Tugas Room DB",
+            course = "PAPB D",
+            daysLeft = "2 Days left",
+            dueDate = "Due Friday",
+            status = "In Progress",
+            description = "Implementasi Room DB penuh"
+        )
+        val taskEntity = task.toEntity()
+        val restoredTask = taskEntity.toDomain()
+        assertEquals(task, restoredTask)
+    }
+
+    @Test
+    fun backgroundWorker_nameAndConstant_areCorrect() {
+        assertEquals("TaskMateReminderWorker", com.example.taskmate.worker.TaskReminderWorker.WORK_NAME)
+    }
+
+    @Test
+    fun retrofitApi_quoteRepository_returnsFallbackWhenOffline() {
+        val repo = com.example.taskmate.data.remote.api.QuoteRepository()
+        val quotePair = kotlinx.coroutines.runBlocking { repo.fetchDailyMotivationQuote() }
+        assertNotNull(quotePair)
+        assertTrue(quotePair.first.isNotBlank())
+        assertTrue(quotePair.second.isNotBlank())
+    }
+
+    @Test
+    fun lightSensor_themeStateAutoToggle_works() {
+        ThemeState.isAutoLightSensorEnabled = true
+        assertTrue(ThemeState.isAutoLightSensorEnabled)
+
+        ThemeState.currentLuxValue = 5.0f
+        assertEquals(5.0f, ThemeState.currentLuxValue, 0.001f)
+
+        ThemeState.isAutoLightSensorEnabled = false
+        assertFalse(ThemeState.isAutoLightSensorEnabled)
     }
 }

@@ -38,6 +38,12 @@ fun HomeScreen(
     val s = strings
     val haptic = LocalHapticFeedback.current
     var taskToDelete by remember { mutableStateOf<TaskItem?>(null) }
+    var dailyQuote by remember { mutableStateOf<Pair<String, String>?>(null) }
+
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        val repo = com.example.taskmate.data.remote.api.QuoteRepository()
+        dailyQuote = repo.fetchDailyMotivationQuote()
+    }
 
     // Ambil 3 jadwal
     val homeSchedules = DummyData.schedules.filter { it.day == "Tuesday" }.ifEmpty { DummyData.schedules.take(3) }
@@ -82,6 +88,44 @@ fun HomeScreen(
                 fontSize = 13.sp,
                 color = AppThemeColors.textSecondary
             )
+
+            // Retrofit API Banner: Motivational Quote
+            dailyQuote?.let { quotePair ->
+                Spacer(modifier = Modifier.height(12.dp))
+                androidx.compose.material3.Card(
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+                    colors = androidx.compose.material3.CardDefaults.cardColors(
+                        containerColor = AppThemeColors.cardBackground
+                    ),
+                    modifier = Modifier.fillParentMaxWidth()
+                ) {
+                    androidx.compose.foundation.layout.Column(
+                        modifier = Modifier.padding(14.dp)
+                    ) {
+                        Text(
+                            text = "💡 Daily Motivation (Retrofit API)",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = AppThemeColors.textPrimary
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "\"${quotePair.first}\"",
+                            fontSize = 12.sp,
+                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                            color = AppThemeColors.textPrimary
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "- ${quotePair.second}",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = AppThemeColors.textSecondary,
+                            modifier = Modifier.align(androidx.compose.ui.Alignment.End)
+                        )
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.height(18.dp))
 

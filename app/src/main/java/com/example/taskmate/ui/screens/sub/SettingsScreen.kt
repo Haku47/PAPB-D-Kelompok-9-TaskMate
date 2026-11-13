@@ -124,6 +124,34 @@ fun SettingsScreen(
                         }
                     }
                 )
+
+                // Auto Dark Mode via Ambient Light Sensor (Hardware Sensor PAPB13)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Auto Dark Mode (Light Sensor)",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
+                        )
+                        Text(
+                            text = if (ThemeState.language == AppLanguage.INDONESIAN) "Ganti tema otomatis saat ruangan gelap" else "Auto switch theme based on ambient light",
+                            fontSize = 11.sp,
+                            color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    androidx.compose.material3.Switch(
+                        checked = ThemeState.isAutoLightSensorEnabled,
+                        onCheckedChange = { enabled ->
+                            ThemeState.isAutoLightSensorEnabled = enabled
+                        }
+                    )
+                }
+
                 SettingRowDropdown(
                     label = s.fontSizeLabel,
                     selectedValue = currentFontSize,
