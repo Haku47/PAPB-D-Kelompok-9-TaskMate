@@ -16,10 +16,7 @@ data class RemoteTaskResponse(
     @SerializedName("todos") val todos: List<RemoteTaskDto> = emptyList()
 )
 
-/**
- * Interface Retrofit HTTP API Client (Materi PAPB12 - Retrofit API).
- * Menangani sinkronisasi data tugas perkuliahan secara asynchronous dari REST API server ke Room DB.
- */
+// Interface Retrofit API untuk sync tugas dari server
 interface TaskApiService {
 
     @GET("todos?limit=5")

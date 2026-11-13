@@ -16,12 +16,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-/**
- * Repository utama untuk autentikasi dan manajemen pengguna.
- * Menerapkan pola Hybrid Local + Cloud:
- * - Cloud Firestore & Firebase Auth sebagai Single Source of Truth
- * - Room Database & DataStore sebagai Local Cache & Offline Support
- */
+// Repository autentikasi (Firebase Auth + Room cache)
 class AuthRepository(
     private val localDataSource: UserLocalDataSource,
     private val remoteDataSource: UserRemoteDataSource = UserRemoteDataSource()

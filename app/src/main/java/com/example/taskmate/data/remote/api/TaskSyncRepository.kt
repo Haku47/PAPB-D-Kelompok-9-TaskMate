@@ -7,15 +7,11 @@ import com.example.taskmate.data.local.entity.toEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-/**
- * Repositori sinkronisasi tugas dari Retrofit REST API ke database lokal Room DB.
- */
+// Repository sync tugas dari REST API ke Room DB
 class TaskSyncRepository(
     private val apiService: TaskApiService = TaskApiService.create()
 ) {
-    /**
-     * Mengambil tugas terbaru dari REST API server via Retrofit dan menyimpannya ke Room DB.
-     */
+    // Ambil data tugas dari API dan simpan ke Room
     suspend fun syncRemoteTasksToRoom(context: Context): Result<List<TaskItem>> = withContext(Dispatchers.IO) {
         try {
             val response = apiService.fetchRemoteTasks()

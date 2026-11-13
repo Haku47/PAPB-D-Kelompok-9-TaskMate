@@ -4,9 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.taskmate.data.model.UserAccount
 
-/**
- * Entitas tabel lokal Room untuk menyimpan cache pengguna yang aman (tanpa password).
- */
+// Table users untuk menyimpan data profil lokal
 @Entity(tableName = "users")
 data class UserEntity(
     @PrimaryKey

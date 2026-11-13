@@ -9,10 +9,7 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
-/**
- * Remote Data Source yang menangani Firebase Authentication dan Cloud Firestore.
- * Bertanggung jawab atas autentikasi, reservasi username unik, dan pengelolaan profil cloud.
- */
+// Remote Data Source Firebase Auth & Cloud Firestore
 class UserRemoteDataSource(
     private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -20,9 +17,7 @@ class UserRemoteDataSource(
 
     val currentFirebaseUser get() = auth.currentUser
 
-    /**
-     * Memeriksa apakah username masih tersedia di Cloud Firestore.
-     */
+    // Cek ketersediaan username di Firestore
     suspend fun isUsernameAvailable(username: String): Boolean {
         val usernameKey = username.trim().lowercase()
         if (usernameKey.isBlank()) return false

@@ -4,9 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.taskmate.data.TaskItem
 
-/**
- * Entitas tabel "tasks" untuk persistence database SQLite dengan Room.
- */
+// Table tasks untuk menyimpan data tugas
 @Entity(tableName = "tasks")
 data class TaskEntity(
     @PrimaryKey

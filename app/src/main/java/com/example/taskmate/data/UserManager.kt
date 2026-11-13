@@ -15,11 +15,7 @@ import kotlinx.coroutines.runBlocking
 
 typealias UserAccount = com.example.taskmate.data.model.UserAccount
 
-/**
- * Adapter / Facade untuk kompatibilitas ke belakang (backward compatibility).
- * Menghubungkan komponen lama ke AuthRepository (Hybrid Local + Cloud)
- * tanpa menyimpan password dalam bentuk plaintext.
- */
+// Helper singleton manajemen user & kompatibilitas ke AuthRepository
 object UserManager {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     var repository: AuthRepository? = null

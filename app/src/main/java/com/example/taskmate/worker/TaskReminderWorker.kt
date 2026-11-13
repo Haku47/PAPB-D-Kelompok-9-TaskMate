@@ -20,10 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 
-/**
- * Worker latar belakang (WorkManager + Coroutines) untuk mengecek dan mengirimkan
- * notifikasi pengingat deadline tugas perkuliahan secara asynchronous.
- */
+// Background worker untuk notifikasi pengingat deadline tugas
 class TaskReminderWorker(
     private val context: Context,
     params: WorkerParameters
@@ -77,10 +74,7 @@ class TaskReminderWorker(
     companion object {
         const val WORK_NAME = "TaskMateReminderWorker"
 
-        /**
-         * Mengatur penjadwalan background worker secara berkala (Setiap 24 Jam)
-         * dengan batasan constraint (NetworkConnected/Any).
-         */
+        // Schedule worker berkala tiap 24 jam
         fun scheduleTaskReminders(context: Context) {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
@@ -97,9 +91,7 @@ class TaskReminderWorker(
             )
         }
 
-        /**
-         * Menjalankan background worker 1x secara langsung (OneTimeWorkRequest).
-         */
+        // Run worker 1x langsung
         fun runImmediateCheck(context: Context) {
             val oneTimeWork = OneTimeWorkRequestBuilder<TaskReminderWorker>().build()
             WorkManager.getInstance(context).enqueue(oneTimeWork)

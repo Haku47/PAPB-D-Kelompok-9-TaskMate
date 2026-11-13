@@ -7,9 +7,7 @@ import com.example.taskmate.data.CourseSession
 import org.json.JSONArray
 import org.json.JSONObject
 
-/**
- * Entitas tabel "courses" untuk persistence database SQLite dengan Room.
- */
+// Table courses untuk menyimpan data mata kuliah & jadwal
 @Entity(tableName = "courses")
 data class CourseEntity(
     @PrimaryKey
@@ -19,7 +17,7 @@ data class CourseEntity(
     val time: String,
     val room: String,
     val lecturer: String,
-    val isSchedule: Boolean = false, // Flag untuk membedakan mata kuliah utama dan entitas jadwal harian
+    val isSchedule: Boolean = false, // penanda entitas jadwal harian
     val sessionsJson: String = "[]"
 )
 
