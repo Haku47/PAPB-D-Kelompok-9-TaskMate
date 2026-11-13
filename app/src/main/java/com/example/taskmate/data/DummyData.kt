@@ -6,7 +6,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.example.taskmate.data.local.AppDatabase
+import com.example.taskmate.data.local.entity.toDomain
+import com.example.taskmate.data.local.entity.toEntity
 import com.example.taskmate.ui.components.CourseTimeHelper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -142,7 +150,10 @@ data class TaskItem(
 }
 
 object DummyData {
+    private var database: AppDatabase? = null
     private var prefs: SharedPreferences? = null
+    private val dbScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
     var finishedTasksCount by mutableStateOf(20)
 
     val courses = mutableStateListOf<CourseItem>()
@@ -334,16 +345,46 @@ object DummyData {
     }
 
     /**
-     * Menginisialisasi penyimpanan lokal SharedPreferences agar data Course dan Task
-     * tetap tersimpan meskipun aplikasi ditutup / diberhentikan.
+     * Menginisialisasi Room Database (SQLite) dan SharedPreferences fallback.
      */
     fun init(context: Context) {
         prefs = context.getSharedPreferences("taskmate_storage", Context.MODE_PRIVATE)
-        loadData()
+        val db = AppDatabase.getInstance(context)
+        database = db
+
+        runBlocking(Dispatchers.IO) {
+            loadFromRoomDatabase(db)
+        }
         UserManager.init(context)
     }
 
-    private fun loadData() {
+    private suspend fun loadFromRoomDatabase(db: AppDatabase) {
+        try {
+            val dbCourses = db.courseDao().getAllCoursesOnce()
+            val dbSchedules = db.courseDao().getAllSchedulesOnce()
+            val dbTasks = db.taskDao().getAllTasksOnce()
+
+            if (dbCourses.isNotEmpty() || dbSchedules.isNotEmpty() || dbTasks.isNotEmpty()) {
+                courses.clear()
+                courses.addAll(dbCourses.map { it.toDomain() })
+
+                schedules.clear()
+                schedules.addAll(dbSchedules.map { it.toDomain() })
+
+                tasks.clear()
+                tasks.addAll(dbTasks.map { it.toDomain() })
+            } else {
+                // Seed initial default data into Room DB
+                db.courseDao().insertCourses(initialCourses.map { it.toEntity(isSchedule = false) })
+                db.courseDao().insertCourses(initialSchedules.map { it.toEntity(isSchedule = true) })
+                db.taskDao().insertTasks(initialTasks.map { it.toEntity() })
+            }
+        } catch (_: Exception) {
+            loadDataFromPrefs()
+        }
+    }
+
+    private fun loadDataFromPrefs() {
         val sp = prefs ?: return
         val coursesJson = sp.getString("courses", null)
         val schedulesJson = sp.getString("schedules", null)
@@ -362,8 +403,6 @@ object DummyData {
                 courses.clear()
                 courses.addAll(initialCourses)
             }
-        } else {
-            saveData()
         }
 
         if (schedulesJson != null) {
@@ -378,8 +417,6 @@ object DummyData {
                 schedules.clear()
                 schedules.addAll(initialSchedules)
             }
-        } else {
-            saveData()
         }
 
         if (tasksJson != null) {
@@ -394,12 +431,24 @@ object DummyData {
                 tasks.clear()
                 tasks.addAll(initialTasks)
             }
-        } else {
-            saveData()
         }
     }
 
     private fun saveData() {
+        val db = database
+        if (db != null) {
+            dbScope.launch {
+                try {
+                    db.courseDao().clearCourses()
+                    db.courseDao().insertCourses(courses.map { it.toEntity(isSchedule = false) })
+                    db.courseDao().insertCourses(schedules.map { it.toEntity(isSchedule = true) })
+
+                    db.taskDao().clearTasks()
+                    db.taskDao().insertTasks(tasks.map { it.toEntity() })
+                } catch (_: Exception) {}
+            }
+        }
+
         val sp = prefs ?: return
         try {
             val coursesArr = JSONArray()
@@ -417,8 +466,7 @@ object DummyData {
                 .putString("tasks", tasksArr.toString())
                 .putInt("finished_count", finishedTasksCount)
                 .apply()
-        } catch (_: Exception) {
-        }
+        } catch (_: Exception) {}
     }
 
     fun getCourseById(id: Int): CourseItem? {
