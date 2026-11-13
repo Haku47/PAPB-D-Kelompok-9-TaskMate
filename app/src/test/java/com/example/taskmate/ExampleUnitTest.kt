@@ -631,13 +631,4 @@ class ExampleUnitTest {
     fun backgroundWorker_nameAndConstant_areCorrect() {
         assertEquals("TaskMateReminderWorker", com.example.taskmate.worker.TaskReminderWorker.WORK_NAME)
     }
-
-    @Test
-    fun retrofitApi_quoteRepository_returnsFallbackWhenOffline() {
-        val repo = com.example.taskmate.data.remote.api.QuoteRepository()
-        val quotePair = kotlinx.coroutines.runBlocking { repo.fetchDailyMotivationQuote() }
-        assertNotNull(quotePair)
-        assertTrue(quotePair.first.isNotBlank())
-        assertTrue(quotePair.second.isNotBlank())
-    }
 }
