@@ -37,11 +37,7 @@ object ThemeState {
         @Composable
         get() = fontSizeMode.scale
 
-    // Indikator mode sensor cahaya otomatis (Ambient Light Sensor)
-    var isAutoLightSensorEnabled by mutableStateOf(false)
-    var currentLuxValue by mutableStateOf(100.0f)
-
-    // Indikator aktif dark mode yang bereaksi terhadap themeMode dan preferensi sistem
+    // Indikator aktif dark mode yang bereaksi terhadap themeMode pilihan pengguna
     val isDarkMode: Boolean
         @Composable
         get() = when (themeMode) {

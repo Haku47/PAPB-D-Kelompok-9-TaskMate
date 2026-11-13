@@ -640,16 +640,4 @@ class ExampleUnitTest {
         assertTrue(quotePair.first.isNotBlank())
         assertTrue(quotePair.second.isNotBlank())
     }
-
-    @Test
-    fun lightSensor_themeStateAutoToggle_works() {
-        ThemeState.isAutoLightSensorEnabled = true
-        assertTrue(ThemeState.isAutoLightSensorEnabled)
-
-        ThemeState.currentLuxValue = 5.0f
-        assertEquals(5.0f, ThemeState.currentLuxValue, 0.001f)
-
-        ThemeState.isAutoLightSensorEnabled = false
-        assertFalse(ThemeState.isAutoLightSensorEnabled)
-    }
 }
