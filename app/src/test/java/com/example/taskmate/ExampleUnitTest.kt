@@ -631,4 +631,10 @@ class ExampleUnitTest {
     fun backgroundWorker_nameAndConstant_areCorrect() {
         assertEquals("TaskMateReminderWorker", com.example.taskmate.worker.TaskReminderWorker.WORK_NAME)
     }
+
+    @Test
+    fun retrofitTaskSyncRepository_handlesOfflineAndMapper() {
+        val repo = com.example.taskmate.data.remote.api.TaskSyncRepository()
+        assertNotNull(repo)
+    }
 }

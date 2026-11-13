@@ -356,6 +356,18 @@ object DummyData {
             loadFromRoomDatabase(db)
         }
         UserManager.init(context)
+
+        // Asynchronous Retrofit Task Sync API (PAPB12) -> Syncs tasks from server to Room DB
+        dbScope.launch {
+            try {
+                com.example.taskmate.data.remote.api.TaskSyncRepository().syncRemoteTasksToRoom(context)
+                val updatedTasks = db.taskDao().getAllTasksOnce()
+                if (updatedTasks.isNotEmpty()) {
+                    tasks.clear()
+                    tasks.addAll(updatedTasks.map { it.toDomain() })
+                }
+            } catch (_: Exception) {}
+        }
     }
 
     private suspend fun loadFromRoomDatabase(db: AppDatabase) {

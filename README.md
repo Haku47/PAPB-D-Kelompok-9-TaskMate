@@ -6,7 +6,7 @@
 
 <p align="center">
   <b>A Modern, Cloud-Synchronized Student Task & Course Management Android Application</b><br>
-  <i>Dirancang presisi berbasis Jetpack Compose, Material 3, Hybrid Storage Architecture, Room DB, dan WorkManager</i>
+  <i>Dirancang presisi berbasis Jetpack Compose, Material 3, Hybrid Storage Architecture, Room DB, WorkManager, dan Retrofit Task Sync API</i>
 </p>
 
 <p align="center">
@@ -15,7 +15,7 @@
   <img src="https://img.shields.io/badge/UI-Jetpack%20Compose%20M3-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white" alt="Jetpack Compose" />
   <img src="https://img.shields.io/badge/Backend-Firebase%20Auth%20%2B%20Firestore-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase" />
   <img src="https://img.shields.io/badge/Local%20DB-Room%20SQLite%20%2B%20DataStore-F4511E?style=for-the-badge&logo=sqlite&logoColor=white" alt="Room Database" />
-  <img src="https://img.shields.io/badge/Unit%20Tests-22%2F22%20Passed-brightgreen?style=for-the-badge&logo=checkmarx&logoColor=white" alt="Tests" />
+  <img src="https://img.shields.io/badge/Unit%20Tests-23%2F23%20Passed-brightgreen?style=for-the-badge&logo=checkmarx&logoColor=white" alt="Tests" />
 </p>
 
 ---
@@ -29,7 +29,7 @@
 | **Target Evaluasi** | Proyek Tugas Kelompok & Ujian Akhir Praktikum (UAP) |
 | **Pola Arsitektur** | MVVM (Model-View-ViewModel) + Repository Pattern + Clean Architecture |
 | **Penyimpanan Data** | **Hybrid Architecture**: Cloud Single Source of Truth + Room SQLite Offline-First Cache |
-| **Cakupan Teori PAPB** | **Sangat Memuaskan (5 Teori Utama Penuh)**: Activity, Navigation, Coroutines, ViewModel, Room DB, & Remote Cloud API |
+| **Cakupan Teori PAPB** | **Sangat Memuaskan (6 Teori Utama Penuh)**: Activity, Navigation, Coroutines, ViewModel, Room DB, & Retrofit Task Sync API |
 
 ---
 
@@ -48,10 +48,11 @@
 
 ## 💡 Tentang TaskMate
 
-**TaskMate** adalah solusi manajemen jadwal perkuliahan dan tugas akademik mahasiswa yang dibangun secara modern dengan **Jetpack Compose (Material 3)**. Aplikasi ini dirancang untuk menjawab tantangan pengelolaan waktu mahasiswa melalui perpaduan sinkronisasi awan terpusat dan keandalan akses offline berbasis **Room Database** dan **WorkManager**.
+**TaskMate** adalah solusi manajemen jadwal perkuliahan dan tugas akademik mahasiswa yang dibangun secara modern dengan **Jetpack Compose (Material 3)**. Aplikasi ini dirancang untuk menjawab tantangan pengelolaan waktu mahasiswa melalui perpaduan sinkronisasi awan terpusat dan keandalan akses offline berbasis **Room Database**, **WorkManager**, dan **Retrofit Task Sync API**.
 
 ### 🌟 Nilai Unggulan Aplikasi:
-- 🌐 **Sinkronisasi Multi-Perangkat (Cloud Remote API)**: Akun pengguna terhubung langsung ke **Firebase Authentication** dan **Cloud Firestore**. Mahasiswa dapat login di perangkat smartphone mana pun dengan data profil yang selalu tersinkronisasi.
+- 🌐 **Sinkronisasi Multi-Perangkat (Cloud)**: Akun pengguna terhubung langsung ke **Firebase Authentication** dan **Cloud Firestore**. Mahasiswa dapat login di perangkat smartphone mana pun dengan data profil yang selalu tersinkronisasi.
+- 🔄 **Retrofit Task Sync API**: Terintegrasi dengan **Retrofit 2 HTTP Client** untuk mensinkronisasikan tugas akademik terbaru secara otomatis dari REST API server ke **Room DB**.
 - ⚡ **Offline-First & Room SQLite DB**: Sesi aktif, data mata kuliah, dan daftar tugas tersimpan secara terpusat di **Room Database** (3 tabel: `users`, `courses`, `tasks`) dan **DataStore Preferences**.
 - 🔔 **Pengingat Otomatis (WorkManager)**: Latar belakang aplikasi diperkuat dengan **WorkManager** yang secara otomatis mengecek deadline tugas dan mengirimkan notifikasi pengingat.
 - 🎨 **Presisi Desain Figma**: Komponen antarmuka (Clock dial time picker, keyboard entry mode, date picker, kartu mata kuliah, dan dashboard statistik) dirancang presisi sesuai mockup UI/UX.
@@ -74,6 +75,7 @@ TaskMate memisahkan tanggung jawab kode secara terstruktur menggunakan prinsip *
 +-----------------------------------------------------------------------------------+
 |                         Domain & Repository Layer (MVVM)                          |
 |   AuthRepository       : Single Source of Truth Coordinator                       |
+|   TaskSyncRepository   : Retrofit Task Sync API -> Room DB Coordinator            |
 |   DummyData & Manager  : Room DB & Memory State Coordinator                       |
 +-----------------------------------------------------------------------------------+
                                           |
@@ -84,8 +86,8 @@ TaskMate memisahkan tanggung jawab kode secara terstruktur menggunakan prinsip *
 |  Local Storage Layer  |     |   Background Layer    |     |    Cloud Layer    |
 | - Room DB (SQLite)    |     | - WorkManager Worker  |     | - Firebase Auth   |
 |   (User,Course,Task)  |     |   (Periodic Reminder) |     | - Cloud Firestore |
-| - DataStore Prefs     |     +-----------------------+     +-------------------+
-+-----------------------+
+| - DataStore Prefs     |     +-----------------------+     | - Retrofit REST   |
++-----------------------+                                   +-------------------+
 ```
 
 ### Prinsip Keamanan & Privasi Data:
@@ -97,7 +99,7 @@ TaskMate memisahkan tanggung jawab kode secara terstruktur menggunakan prinsip *
 
 ## 🚀 Fitur Utama & Modul Aplikasi
 
-### 1. 🔐 Autentikasi & Akun Pengguna (Remote Cloud API)
+### 1. 🔐 Autentikasi & Akun Pengguna
 - **Pendaftaran Akun (Sign Up)**: Input *Front Name*, *Back Name* (otomatis digabung menjadi *Full Name*), *Username*, *Email*, *Password*, dan *Confirm Password*. Dilengkapi validasi regex, deteksi duplikasi username/email, dan mekanisme rollback otomatis jika proses cloud terganggu.
 - **Login Fleksibel**: Mahasiswa dapat masuk menggunakan **Email** maupun **Username**. Sistem secara otomatis meresolusi username ke email akun melalui cloud.
 - **Lupa Password (Forgot Password)**: Pengiriman tautan reset password resmi ke email pengguna melalui Firebase Authentication.
@@ -109,7 +111,8 @@ TaskMate memisahkan tanggung jawab kode secara terstruktur menggunakan prinsip *
 - **Interactive Time Picker**: Pemilihan jam mulai dan selesai kuliah menggunakan visual Jam Dial (Clock Face) maupun Input Papan Ketik (Keyboard), mendukung format 12-Jam (AM/PM) dan 24-Jam.
 - **Operasi CRUD**: Tambah mata kuliah baru (*Add Course*), ubah data (*Edit Course*), dan hapus (*Delete Course*).
 
-### 3. ✅ Manajemen Tugas (Tasks, WorkManager & Room DB)
+### 3. ✅ Manajemen Tugas (Tasks, Retrofit REST API & Room DB)
+- **Retrofit Task Sync API**: Pengambilan tugas perkuliahan dari REST API server yang otomatis disinkronisasikan ke dalam Room DB.
 - **Room SQLite Persistence**: Penyimpanan data tugas terikat pada `TaskEntity` dan `TaskDao`.
 - **Background Task Worker (WorkManager)**: `TaskReminderWorker` mengecek deadline tugas perkuliahan secara teratur dan mengirim notifikasi lokal (*System Notification*).
 - **Monitoring Tenggat Waktu**: Menampilkan sisa hari pengerjaan (*Days Left*), tanggal jatuh tempo (*Due Date*), status tugas (*In Progress* / *Completed*), dan deskripsi lengkap tugas.
@@ -166,7 +169,7 @@ TaskMate/
 │       │       ├── MainActivity.kt       # Activity utama & inisialisasi tema
 │       │       │
 │       │       ├── data/
-│       │       │   ├── DummyData.kt      # Mock data & Room DB Data Sync Coordinator
+│       │       │   ├── DummyData.kt      # Mock data & Room DB Sync Coordinator
 │       │       │   ├── UserManager.kt    # Adapter facade backward-compatible
 │       │       │   ├── model/
 │       │       │   │   └── UserAccount.kt# Domain model akun
@@ -175,8 +178,8 @@ TaskMate/
 │       │       │   │   ├── dao/          # UserDao, CourseDao, TaskDao
 │       │       │   │   └── entity/       # UserEntity, CourseEntity, TaskEntity
 │       │       │   ├── remote/
-│       │       │   │   ├── UserRemoteDataSource.kt # Firebase Auth & Firestore (Remote API)
-│       │       │   │   └── dto/          # UserDto, UsernameReservationDto
+│       │       │   │   ├── UserRemoteDataSource.kt # Firebase Auth & Firestore
+│       │       │   │   └── api/          # TaskApiService & TaskSyncRepository (Retrofit REST API)
 │       │       │   └── repository/
 │       │       │       └── AuthRepository.kt # Koordinator Hybrid SSOT
 │       │       │
@@ -193,7 +196,7 @@ TaskMate/
 │       │           └── viewmodel/        # ViewModels untuk seluruh layar
 │       │
 │       └── test/java/com/example/taskmate/
-│           └── ExampleUnitTest.kt        # 22 skenario uji unit otomatis (100% Pass)
+│           └── ExampleUnitTest.kt        # 23 skenario uji unit otomatis (100% Pass)
 │
 ├── build.gradle.kts                      # Konfigurasi Gradle root & dependencies
 └── README.md                             # Dokumentasi resmi proyek
@@ -209,11 +212,12 @@ TaskMate/
 | **Build Tool** | Android Gradle Plugin (AGP) | `9.4.1` | Sistem kompilasi Android modern |
 | **UI Kit** | Jetpack Compose (Material 3) | BoM `2026.02.01` | Deklaratif UI antarmuka responsif |
 | **Navigation** | Navigation Compose | `2.8.5` | Manajemen alur navigasi antar-layar |
-| **Cloud Auth & API**| Firebase Auth & Firestore | BoM `33.7.0` | Remote API Autentikasi dan database cloud |
+| **Cloud Auth & DB**| Firebase Auth & Firestore | BoM `33.7.0` | Autentikasi dan database terpusat cloud |
 | **Local DB** | AndroidX Room Database | `2.7.0-alpha13` | Persistence SQLite 3 tabel (`users`, `courses`, `tasks`) |
 | **Background Work**| WorkManager KTX | `2.9.1` | Latar belakang asynchronous task & notification worker |
+| **HTTP REST API** | Retrofit 2 & Gson | `2.11.0` | Konsumsi Web API sinkronisasi tugas dari server |
 | **Session** | Jetpack DataStore Preferences | `1.1.1` | Penyimpanan token sesi pengguna |
-| **Testing** | JUnit 4 + AndroidX Test | `4.13.2` | Pengujian logika dan validasi unit (22/22 Pass) |
+| **Testing** | JUnit 4 + AndroidX Test | `4.13.2` | Pengujian logika dan validasi unit (23/23 Pass) |
 
 ---
 
@@ -243,7 +247,7 @@ cd Taskmate
 
 ## 🧪 Hasil Pengujian Unit (Unit Tests)
 
-Pengujian otomatis dijalankan menggunakan JUnit 4 pada [`ExampleUnitTest.kt`](file:///D:/Project/Mobile/PAPB-D-Kelompok-9-TaskMate/app/src/test/java/com/example/taskmate/ExampleUnitTest.kt) dengan hasil **22/22 Lulus (100% Pass)**:
+Pengujian otomatis dijalankan menggunakan JUnit 4 pada [`ExampleUnitTest.kt`](file:///D:/Project/Mobile/PAPB-D-Kelompok-9-TaskMate/app/src/test/java/com/example/taskmate/ExampleUnitTest.kt) dengan hasil **23/23 Lulus (100% Pass)**:
 
 | No | Nama Skenario Uji | Domain Pengujian | Status |
 | :---: | :--- | :--- | :---: |
@@ -269,6 +273,7 @@ Pengujian otomatis dijalankan menggunakan JUnit 4 pada [`ExampleUnitTest.kt`](fi
 | 20 | `signUpViewModel_validationsAndSuccess` | Validasi ViewModel Pendaftaran & Nama Lengkap | ✅ PASS |
 | 21 | `roomEntities_courseAndTaskMappers_areLossless` | Pemetaan & Konversi Lossless Room Entities | ✅ PASS |
 | 22 | `backgroundWorker_nameAndConstant_areCorrect` | Verifikasi Konstanta WorkManager Worker | ✅ PASS |
+| 23 | `retrofitTaskSyncRepository_handlesOfflineAndMapper` | Retrofit REST API Task Sync -> Room DB | ✅ PASS |
 
 ---
 
