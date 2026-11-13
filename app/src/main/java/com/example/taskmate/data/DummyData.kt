@@ -356,22 +356,17 @@ object DummyData {
             loadFromRoomDatabase(db)
         }
         UserManager.init(context)
-
-        // Asynchronous Retrofit Task Sync API (PAPB12) -> Syncs tasks from server to Room DB
-        dbScope.launch {
-            try {
-                com.example.taskmate.data.remote.api.TaskSyncRepository().syncRemoteTasksToRoom(context)
-                val updatedTasks = db.taskDao().getAllTasksOnce()
-                if (updatedTasks.isNotEmpty()) {
-                    tasks.clear()
-                    tasks.addAll(updatedTasks.map { it.toDomain() })
-                }
-            } catch (_: Exception) {}
-        }
     }
 
     private suspend fun loadFromRoomDatabase(db: AppDatabase) {
         try {
+            // Bersihkan data dummy API acak lama jika ada agar 100% presisi sesuai desain Figma
+            val allDbTasks = db.taskDao().getAllTasksOnce()
+            if (allDbTasks.any { it.id >= 5000 || it.course.contains("API Sync") || it.title.startsWith("Do something") || it.title.startsWith("Memorize") }) {
+                db.taskDao().clearTasks()
+                db.taskDao().insertTasks(initialTasks.map { it.toEntity() })
+            }
+
             val dbCourses = db.courseDao().getAllCoursesOnce()
             val dbSchedules = db.courseDao().getAllSchedulesOnce()
             val dbTasks = db.taskDao().getAllTasksOnce()
@@ -390,6 +385,13 @@ object DummyData {
                 db.courseDao().insertCourses(initialCourses.map { it.toEntity(isSchedule = false) })
                 db.courseDao().insertCourses(initialSchedules.map { it.toEntity(isSchedule = true) })
                 db.taskDao().insertTasks(initialTasks.map { it.toEntity() })
+
+                courses.clear()
+                courses.addAll(initialCourses)
+                schedules.clear()
+                schedules.addAll(initialSchedules)
+                tasks.clear()
+                tasks.addAll(initialTasks)
             }
         } catch (_: Exception) {
             loadDataFromPrefs()

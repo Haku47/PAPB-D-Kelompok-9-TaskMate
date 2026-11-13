@@ -24,12 +24,12 @@ class TaskSyncRepository(
                 val convertedTasks = remoteTasks.mapIndexed { index, dto ->
                     TaskItem(
                         id = 5000 + dto.id,
-                        title = dto.todo.take(35),
-                        course = "PAPB D (API Sync)",
-                        daysLeft = if (dto.completed) "Completed" else "${index + 2} Days left",
-                        dueDate = "Due Friday, Nov ${10 + index}\n11:59 PM",
+                        title = "Assignment ${index + 1}: ${dto.todo.take(15)}",
+                        course = "Course A",
+                        daysLeft = if (dto.completed) "Completed" else "7 Days left",
+                        dueDate = "Due Friday, Oct 16\n11:59 PM",
                         status = if (dto.completed) "Finished" else "In Progress",
-                        description = "Tugas tersinkronisasi otomatis via Retrofit REST API dari server."
+                        description = "Complete the exercise assigned in class and upload the report before the deadline."
                     )
                 }
 
